@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Сервис закупок из Китая с проверкой товара, страховкой и доставкой. 5000+ довольных клиентов.">
+<meta name="keywords" content="закупки из Китая, доставка из Китая, европейские товары, сервис закупок">
+<meta property="og:title" content="LOCKEDCN - Заказ товаров из Китая">
+<meta property="og:description" content="Быстрая доставка, честная цена, полная страховка">
+<title>LOCKEDCN - Заказ товаров из Китая</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#050505;--bg2:#0a0a0a;--bg3:#111111;--bg4:#1a1a1a;
+--text:#e0e0e0;--text2:#888;--text3:#555;
+--accent:#c9a84c;--accent2:#e8c96d;--accent-dark:#a08030;
+--success:#2ecc71;--error:#e74c3c;
+--border:#1f1f1f;--border2:#2a2a2a;
+--shadow:0 4px 24px rgba(0,0,0,.5);
+--r:8px;--r2:12px;--r3:16px;--r4:20px;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;line-height:1.6}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+ul{list-style:none}
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
+.section{padding:100px 0}
+
+/* HEADER */
+.header{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(5,5,5,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);transition:all .4s}
+.header.scrolled{background:rgba(5,5,5,.95)}
+.header-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:72px}
+.logo{font-size:22px;font-weight:800;letter-spacing:-.5px;color:var(--text)}
+.logo span{color:var(--accent)}
+.nav{display:flex;gap:36px}
+.nav a{font-size:14px;font-weight:500;color:var(--text2);transition:color .3s;position:relative;padding:4px 0}
+.nav a:hover,.nav a.active{color:var(--accent)}
+.nav a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;background:var(--accent);transition:width .3s}
+.nav a:hover::after,.nav a.active::after{width:100%}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px}
+.hamburger span{width:22px;height:2px;background:var(--text);transition:all .3s;border-radius:2px}
+.hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+.mobile-menu{display:none;position:fixed;top:72px;left:0;right:0;background:var(--bg2);border-bottom:1px solid var(--border);padding:20px 24px 30px;z-index:99}
+.mobile-menu.active{display:block}
+.mobile-menu a{display:block;padding:14px 0;font-size:16px;font-weight:500;color:var(--text2);border-bottom:1px solid var(--border)}
+.mobile-menu a:last-child{border:none}
+.mobile-menu a:hover{color:var(--accent)}
+
+/* HERO */
+.hero{min-height:100vh;background:url('images/logo.jpg') center/cover no-repeat var(--bg);position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:100px 24px 60px;text-align:center}
+.hero::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,5,5,.2) 0%,rgba(5,5,5,.4) 40%,rgba(5,5,5,.85) 100%)}
+.hero-content{position:relative;z-index:1;max-width:680px}
+.hero-content h1{font-size:56px;font-weight:900;color:#fff;line-height:1.1;margin-bottom:20px;letter-spacing:-1.5px}
+.hero-content h1 span{color:var(--accent)}
+.hero-content p{font-size:18px;color:rgba(255,255,255,.7);margin-bottom:50px;line-height:1.7}
+.hero-buttons{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.btn{inline-flex;align-items:center;gap:8px;padding:16px 32px;font-size:15px;font-weight:700;border-radius:var(--r2);border:none;cursor:pointer;transition:all .3s;font-family:inherit}
+.btn-primary{background:var(--accent);color:#000}
+.btn-primary:hover{background:var(--accent2);transform:translateY(-2px);box-shadow:0 8px 30px rgba(201,168,76,.25)}
+.btn-outline{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.25)}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+
+
+/* SECTIONS */
+.section-label{font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:4px;margin-bottom:16px}
+.section-title{font-size:42px;font-weight:800;color:#fff;margin-bottom:16px;letter-spacing:-1px}
+.section-desc{font-size:16px;color:var(--text2);max-width:550px;margin:0 auto}
+.section-header{text-align:center;margin-bottom:50px}
+
+/* ABOUT */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center}
+.about-text p{font-size:16px;color:var(--text2);line-height:1.8;margin-bottom:16px}
+.about-check{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)}
+.about-check:last-child{border:none}
+.about-check-icon{width:32px;height:32px;background:rgba(46,204,113,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--success);font-size:16px;flex-shrink:0}
+.about-check span{font-size:15px;font-weight:500;color:var(--text)}
+.about-visual{background:var(--bg3);border-radius:var(--r3);padding:32px;border:1px solid var(--border)}
+.about-visual h3{font-size:22px;font-weight:700;color:#fff;margin-bottom:24px;text-align:center}
+.about-vgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.about-vcard{background:var(--bg2);border-radius:var(--r);padding:20px;text-align:center;border:1px solid var(--border)}
+.about-vcard-icon{font-size:28px;margin-bottom:10px}
+.about-vcard h4{font-size:14px;font-weight:700;color:#fff;margin-bottom:4px}
+.about-vcard p{font-size:12px;color:var(--text2)}
+
+/* HOW */
+.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;position:relative}
+.how-grid::before{content:'';position:absolute;top:36px;left:15%;right:15%;height:1px;background:linear-gradient(90deg,var(--accent),rgba(201,168,76,.2))}
+.step-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r3);padding:40px 28px;text-align:center;transition:all .4s;position:relative}
+.step-card:hover{border-color:var(--accent);transform:translateY(-6px);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.step-num{width:72px;height:72px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:26px;font-weight:800;color:#000}
+.step-card h3{font-size:20px;font-weight:700;color:#fff;margin-bottom:12px}
+.step-card p{font-size:14px;color:var(--text2);line-height:1.7}
+
+/* CALCULATOR */
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+.calc-form{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r3);padding:40px}
+.calc-title{font-size:13px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:3px;margin-bottom:24px}
+.calc-label{display:block;font-size:14px;font-weight:500;color:var(--text);margin-bottom:8px}
+.calc-input{width:100%;padding:15px 18px;background:var(--bg2);border:1.5px solid var(--border2);border-radius:var(--r);font-size:15px;font-family:inherit;color:var(--text);transition:all .3s;margin-bottom:14px}
+.calc-input:focus{outline:none;border-color:var(--accent)}
+.calc-input-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.calc-btn{width:100%;padding:18px;background:var(--accent);color:#000;border:none;border-radius:var(--r);font-size:16px;font-weight:700;cursor:pointer;transition:all .3s;font-family:inherit;margin-top:6px}
+.calc-btn:hover{background:var(--accent2);box-shadow:0 8px 30px rgba(201,168,76,.25)}
+.calc-result{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r3);padding:40px;color:#fff}
+.calc-result-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--border2)}
+.calc-result-title{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:2px;opacity:.6}
+.region-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:700;background:rgba(201,168,76,.15);color:var(--accent)}
+.calc-row{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--border)}
+.calc-row span:first-child{font-size:14px;color:var(--text2)}
+.calc-row span:last-child{font-size:16px;font-weight:600}
+.calc-row.total{font-size:18px;margin-top:16px;padding-top:20px;border-top:1.5px solid var(--border2);border-bottom:none}
+.calc-row.total span:last-child{font-size:28px;font-weight:800;color:var(--accent)}
+.calc-error{color:var(--error);font-size:13px;margin-top:10px;display:none}
+.calc-error.show{display:block}
+.loading{display:none;text-align:center;padding:30px 0}
+.spinner{width:24px;height:24px;border:3px solid rgba(255,255,255,.15);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;margin:0 auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* GALLERY */
+.gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.gallery-item{border-radius:var(--r2);overflow:hidden;border:1px solid var(--border);transition:all .4s;cursor:pointer}
+.gallery-item:hover{transform:scale(1.03);box-shadow:0 12px 40px rgba(0,0,0,.5);border-color:var(--accent)}
+.gallery-item img{width:100%;aspect-ratio:1;object-fit:cover}
+.gallery-item-info{padding:16px;background:var(--bg3)}
+.gallery-item-info h4{font-size:15px;font-weight:600;color:#fff}
+.gallery-item-info p{font-size:12px;color:var(--text2);margin-top:4px}
+
+/* FOOTER */
+.footer{background:var(--bg2);padding:80px 0 30px;border-top:1px solid var(--border)}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:50px}
+.footer-brand .logo{font-size:24px;font-weight:800;margin-bottom:16px}
+.footer-brand .logo span{color:var(--accent)}
+.footer-brand p{font-size:14px;color:var(--text2);line-height:1.7}
+.footer-col h4{font-size:12px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:2px;margin-bottom:20px}
+.footer-col ul li{margin-bottom:12px}
+.footer-col ul li a{font-size:14px;color:var(--text2);transition:color .3s}
+.footer-col ul li a:hover{color:var(--accent)}
+.footer-bottom{border-top:1px solid var(--border);padding-top:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.footer-bottom p{font-size:13px;color:var(--text3)}
+.social-links{display:flex;gap:12px;margin-top:20px}
+.social-link{width:42px;height:42px;background:var(--bg3);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all .3s}
+.social-link:hover{border-color:var(--accent);background:rgba(201,168,76,.1)}
+
+/* ANIMATIONS */
+.animate{opacity:0;transform:translateY(30px);transition:all .7s cubic-bezier(.25,.46,.45,.94)}
+.animate.visible{opacity:1;transform:translateY(0)}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* RESPONSIVE */
+@media(max-width:1024px){
+.nav{display:none}
+.hamburger{display:flex}
+.how-grid::before{display:none}
+.footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:768px){
+.hero{padding:90px 20px 40px;min-height:100svh}
+.hero-content h1{font-size:38px}
+.hero-content p{font-size:16px}
+.hero-stats{gap:36px}
+.hero-stat-num{font-size:30px}
+.hero-buttons{flex-direction:column;align-items:center}
+.section{padding:70px 0}
+.section-title{font-size:30px}
+.section-desc{font-size:15px}
+.how-grid,.gallery-grid,.about-grid{grid-template-columns:1fr}
+.footer-grid{grid-template-columns:1fr}
+.calc-grid{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+.hero{padding:80px 16px 30px}
+.hero-content h1{font-size:28px;margin-bottom:16px}
+.hero-content p{font-size:15px;margin-bottom:28px}
+.hero-buttons{width:100%}
+.hero-buttons .btn{width:100%;justify-content:center}
+.hero-stats{flex-direction:column;gap:20px;margin-top:30px}
+.hero-stat-num{font-size:26px}
+.section{padding:60px 0}
+.section-title{font-size:26px}
+.calc-form,.calc-result{padding:24px}
+.calc-input-row{grid-template-columns:1fr}
+.gallery-grid{grid-template-columns:repeat(2,1fr);gap:12px}
+.about-vgrid{grid-template-columns:1fr}
+.footer-bottom{flex-direction:column;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header" id="header">
+<div class="header-inner">
+<a href="#" class="logo">LOCKED<span>CN</span></a>
+<nav class="nav">
+<a href="#about" class="active">О нас</a>
+<a href="#how">Как работает</a>
+<a href="#calculator">Калькулятор</a>
+<a href="#gallery">Галерея</a>
+<a href="#contact">Контакты</a>
+</nav>
+<div class="hamburger" id="hamburger">
+<span></span><span></span><span></span>
+</div>
+</div>
+<div class="mobile-menu" id="mobileMenu">
+<a href="#about" class="mobile-link">О нас</a>
+<a href="#how" class="mobile-link">Как работает</a>
+<a href="#calculator" class="mobile-link">Калькулятор</a>
+<a href="#gallery" class="mobile-link">Галерея</a>
+<a href="#contact" class="mobile-link">Контакты</a>
+</div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+<div class="hero-content">
+<h1>Заказ товаров из <span>Китая</span></h1>
+<p>Удобный сервис для покупки товаров с проверкой качества, хранением на складе и быстрой доставкой по всей России.</p>
+<div class="hero-buttons">
+<button class="btn btn-primary" onclick="document.getElementById('calculator').scrollIntoView({behavior:'smooth'})">Рассчитать стоимость</button>
+<a href="#about" class="btn btn-outline">Узнать подробнее</a>
+</div>
+</div>
+</section>
+
+<!-- ABOUT -->
+<section class="section" id="about">
+<div class="container">
+<div class="section-header">
+<div class="section-label">О нас</div>
+<h2 class="section-title">Надёжный партнёр для покупок</h2>
+</div>
+<div class="about-grid">
+<div class="about-text animate">
+<p>Мы — профессиональный сервис закупок товаров из <strong style="color:#fff">Китая</strong>. Наша миссия — сделать международные покупки доступными, безопасными и удобными для каждого.</p>
+<p>Каждый заказ проходит <strong style="color:#fff">тщательную проверку</strong> перед отправкой. Мы обеспечиваем полную страховку, прозрачное ценообразование и оперативную поддержку на всех этапах.</p>
+<div class="about-check">
+<div class="about-check-icon">✓</div>
+<span>Оплата при получении — безопасно и удобно</span>
+</div>
+<div class="about-check">
+<div class="about-check-icon">✓</div>
+<span>Проверка качества перед каждой отправкой</span>
+</div>
+<div class="about-check">
+<div class="about-check-icon">✓</div>
+<span>Полная страховка каждого заказа</span>
+</div>
+<div class="about-check">
+<div class="about-check-icon">✓</div>
+<span>Средний срок доставки 12-20 дней</span>
+</div>
+</div>
+<div class="about-visual animate">
+<h3>Полная защита покупателя</h3>
+<div class="about-vgrid">
+<div class="about-vcard"><div class="about-vcard-icon">🔍</div><h4>Проверка</h4><p>Каждый товар проверяется</p></div>
+<div class="about-vcard"><div class="about-vcard-icon">📋</div><h4>Контроль</h4><p>Фото перед отправкой</p></div>
+<div class="about-vcard"><div class="about-vcard-icon">💰</div><h4>Страховка</h4><p>Компенсация при браке</p></div>
+<div class="about-vcard"><div class="about-vcard-icon">📦</div><h4>Упаковка</h4><p>Надёжная доставка</p></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how" style="background:var(--bg2)">
+<div class="container">
+<div class="section-header">
+<div class="section-label">Процесс</div>
+<h2 class="section-title">Как это работает</h2>
+<p class="section-desc">Три простых шага к вашей покупке из Китая</p>
+</div>
+<div class="how-grid">
+<div class="step-card animate">
+<div class="step-num">1</div>
+<h3>Отправляете ссылку</h3>
+<p>Находите нужный товар на любом сайте и отправляете нам ссылку через удобный мессенджер</p>
+</div>
+<div class="step-card animate">
+<div class="step-num">2</div>
+<h3>Проверяем и бронируем</h3>
+<p>Проверяем цену, наличие, качество и бронируем товар у продавца</p>
+</div>
+<div class="step-card animate">
+<div class="step-num">3</div>
+<h3>Доставка до двери</h3>
+<p>Товар приезжает в Россию — вы оплачиваете и забираете удобным способом</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- CALCULATOR -->
+<section class="section" id="calculator">
+<div class="container">
+<div class="section-header">
+<div class="section-label">Калькулятор</div>
+<h2 class="section-title">Рассчитайте стоимость</h2>
+<p class="section-desc">Введите ссылку на товар, его цену и вес — мы покажем полную стоимость с доставкой и комиссией</p>
+</div>
+<div class="calc-grid">
+<div class="calc-form">
+<div class="calc-title">Данные товара</div>
+<div>
+<label class="calc-label">Ссылка на товар</label>
+<input type="url" class="calc-input" id="calcUrl" placeholder="https://aliexpress.com/item/123456789.html">
+</div>
+<div class="calc-input-row">
+<div>
+<label class="calc-label">Цена товара (¥)</label>
+<input type="number" class="calc-input" id="calcPrice" placeholder="0.00" step="0.01" min="0">
+</div>
+<div>
+<label class="calc-label">Вес (кг)</label>
+<input type="number" class="calc-input" id="calcWeight" placeholder="0.0" step="0.1" min="0">
+</div>
+</div>
+<button class="calc-btn" id="calcBtn" onclick="calculate()">Рассчитать стоимость</button>
+<div class="calc-error" id="calcError"></div>
+</div>
+<div class="calc-result">
+<div class="calc-result-header">
+<span class="calc-result-title">Итоговая стоимость</span>
+<span class="region-badge">🇨🇳 Китай</span>
+</div>
+<div id="calcResult">
+<div class="calc-row"><span>Цена товара</span><span id="resPrice">—</span></div>
+<div class="calc-row"><span>Доставка</span><span id="resDelivery">—</span></div>
+<div class="calc-row"><span>Комиссия (10%)</span><span id="resCommission">—</span></div>
+<div class="calc-row total"><span>К оплате</span><span id="resTotal">—</span></div>
+</div>
+<div class="loading" id="calcLoading">
+<div class="spinner"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- GALLERY -->
+<section class="section" id="gallery" style="background:var(--bg2)">
+<div class="container">
+<div class="section-header">
+<div class="section-label">Галерея</div>
+<h2 class="section-title">Последние доставки</h2>
+<p class="section-desc">Реальные товары наших клиентов — проверено и доставлено</p>
+</div>
+<div class="gallery-grid">
+<div class="gallery-item animate">
+<img src="images/dior/photo_2026-05-11 21.37.26.jpeg" alt="Dior">
+<div class="gallery-item-info"><h4>Dior</h4><p>Одежда • Доставлено</p></div>
+</div>
+<div class="gallery-item animate">
+<img src="images/dior/photo_2026-05-11 21.37.28.jpeg" alt="Dior">
+<div class="gallery-item-info"><h4>Dior</h4><p>Одежда • Доставлено</p></div>
+</div>
+<div class="gallery-item animate">
+<img src="images/dior/photo_2026-05-11 21.37.30.jpeg" alt="Dior">
+<div class="gallery-item-info"><h4>Dior</h4><p>Одежда • Доставлено</p></div>
+</div>
+<div class="gallery-item animate">
+<img src="images/balenciaga/photo_2026-05-11 21.38.06.jpeg" alt="Balenciaga">
+<div class="gallery-item-info"><h4>Balenciaga</h4><p>Одежда • Доставлено</p></div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer" id="contact">
+<div class="container">
+<div class="footer-grid">
+<div class="footer-brand">
+<div class="logo">LOCKED<span>CN</span></div>
+<p>Надёжный сервис закупок товаров из Китая. 5000+ довольных клиентов по всей России и СНГ.</p>
+<div class="social-links">
+<a href="#" class="social-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3V2z"/></svg></a>
+<a href="#" class="social-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/></svg></a>
+<a href="#" class="social-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22.54 6.42a2.78 2.78 0 00-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 00-1.94 2A29 29 0 001 11.75a29 29 0 00.46 5.33A2.78 2.78 0 003.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 001.94-2 29 29 0 00.46-5.25 29 29 0 00-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg></a>
+<a href="#" class="social-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg></a>
+</div>
+</div>
+<div class="footer-col">
+<h4>Навигация</h4>
+<ul>
+<li><a href="#about">О нас</a></li>
+<li><a href="#how">Как работает</a></li>
+<li><a href="#calculator">Калькулятор</a></li>
+<li><a href="#gallery">Галерея</a></li>
+</ul>
+</div>
+<div class="footer-col">
+<h4>Контакты</h4>
+<ul>
+<li><a href="mailto:lockedcn@contact-cn.ru">lockedcn@contact-cn.ru</a></li>
+<li><a href="#">@lockedcn</a></li>
+<li><a href="tel:+79939043421">+7 (993) 904-34-21</a></li>
+</ul>
+</div>
+</div>
+<div class="footer-bottom">
+<p>© 2025 LOCKEDCN. Все права защищены.</p>
+<p>Расчёт приблизительный. Точная цена после подтверждения заказа.</p>
+</div>
+</div>
+</footer>
+
+<script>
+function calculate(){
+const url=document.getElementById('calcUrl').value;
+const priceYuan=parseFloat(document.getElementById('calcPrice').value);
+const weight=parseFloat(document.getElementById('calcWeight').value)||0;
+const errEl=document.getElementById('calcError');
+errEl.classList.remove('show');
+if(!url||!priceYuan){errEl.textContent='Пожалуйста, заполните ссылку и цену товара';errEl.classList.add('show');return}
+if(priceYuan<=0){errEl.textContent='Цена должна быть больше 0';errEl.classList.add('show');return}
+if(weight<=0){errEl.textContent='Вес должен быть больше 0';errEl.classList.add('show');return}
+document.getElementById('calcBtn').disabled=true;
+document.getElementById('calcResult').style.display='none';
+document.getElementById('calcLoading').style.display='block';
+setTimeout(()=>{
+const rateCNY=12;
+const priceRUB=priceYuan*rateCNY;
+const delivery=weight*600;
+const commission=(priceRUB+delivery)*0.1;
+const total=priceRUB+delivery+commission;
+document.getElementById('resPrice').textContent=priceYuan.toFixed(2)+' ¥ ('+priceRUB.toFixed(2)+' ₽)';
+document.getElementById('resDelivery').textContent=delivery.toFixed(2)+' ₽';
+document.getElementById('resCommission').textContent=commission.toFixed(2)+' ₽';
+document.getElementById('resTotal').textContent=total.toFixed(2)+' ₽';
+document.getElementById('calcLoading').style.display='none';
+document.getElementById('calcResult').style.display='block';
+document.getElementById('calcBtn').disabled=false;
+document.getElementById('calcResult').scrollIntoView({behavior:'smooth',block:'nearest'});
+},800);
+}
+
+window.addEventListener('scroll',()=>{
+document.getElementById('header').classList.toggle('scrolled',window.scrollY>50);
+});
+
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+a.addEventListener('click',e=>{
+e.preventDefault();
+const t=document.querySelector(a.getAttribute('href'));
+if(t)t.scrollIntoView({behavior:'smooth',block:'start'});
+document.getElementById('hamburger').classList.remove('open');
+document.getElementById('mobileMenu').classList.remove('active');
+});
+});
+
+document.getElementById('hamburger').addEventListener('click',function(){
+this.classList.toggle('open');
+document.getElementById('mobileMenu').classList.toggle('active');
+});
+
+const observer=new IntersectionObserver(entries=>{
+entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')});
+},{threshold:0.1});
+document.querySelectorAll('.animate').forEach(el=>observer.observe(el));
+</script>
+</body>
+</html>
