@@ -589,7 +589,7 @@ document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('on'));
 if(!was)item.classList.add('on');
 }
 
-function sendOrder(e){
+async function sendOrder(e){
 e.preventDefault();
 const link=document.getElementById('link').value;
 const name=document.getElementById('name').value;
@@ -601,12 +601,34 @@ const comment=document.getElementById('comment').value;
 
 if(!link||!tg){alert('Заполните обязательные поля');return}
 
-const msg=encodeURIComponent(`НОВЫЙ ЗАКАЗ\n\nСсылка: ${link}\nНазвание: ${name||'-'}\nРазмер: ${size||'-'}\nЦвет: ${color||'-'}\nКол-во: ${qty}\nTelegram: ${tg}\nКомментарий: ${comment||'-'}`);
+const btn=document.querySelector('.fs');
+btn.disabled=true;
+btn.textContent='ОТПРАВЛЯЕМ...';
 
-window.open(`https://t.me/lockedcn?text=${msg}`,'_blank');
+const text=`🛍 НОВЫЙ ЗАКАЗ\n\n🔗 Ссылка: ${link}\n📦 Название: ${name||'—'}\n📐 Размер: ${size||'—'}\n🎨 Цвет: ${color||'—'}\n🔢 Кол-во: ${qty}\n💬 Telegram: ${tg}\n📝 Комментарий: ${comment||'—'}`;
 
-document.getElementById('orderForm').style.display='none';
-document.getElementById('success').classList.add('on');
+try{
+  const r=await fetch(`https://api.telegram.org/bot8807117876:AAHO0fgIv-tq6WzmwRd88rHpB-CI1dQz6gw/sendMessage`,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({chat_id:7976679590,text,parse_mode:'HTML'})
+  });
+  const data=await r.json();
+  if(data.ok){
+    document.getElementById('orderForm').style.display='none';
+    document.getElementById('success').classList.add('on');
+  } else {
+    throw new Error('API error');
+  }
+} catch(err){
+  const msg=encodeURIComponent(text);
+  window.open(`https://t.me/lockedcn?text=${msg}`,'_blank');
+  document.getElementById('orderForm').style.display='none';
+  document.getElementById('success').classList.add('on');
+} finally {
+  btn.disabled=false;
+  btn.textContent='ОТПРАВИТЬ ЗАПРОС';
+}
 }
 
 function openModal(el){
