@@ -7,6 +7,8 @@
 <meta name="keywords" content="закупки из Китая, доставка из Китая, европейские товары, сервис закупок">
 <meta property="og:title" content="LOCKEDCN - Заказ товаров из Китая и Европы">
 <meta property="og:description" content="Быстрая доставка, честная цена, полная страховка">
+<meta property="og:image" content="/og-image.jpg">
+<meta property="og:type" content="website">
 <title>LOCKEDCN - Заказ товаров из Китая и Европы</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -42,7 +44,8 @@ ul{list-style:none}
 .site-header.scrolled{box-shadow:var(--shadow-md)}
 .header-inner{max-width:1200px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:72px}
 .logo{display:flex;align-items:center;gap:10px;font-size:24px;font-weight:900;color:var(--primary)}
-.logo-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--primary),var(--primary-light));border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:16px}
+.logo-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--primary),var(--primary-light));border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0}
+.logo-icon svg{width:22px;height:22px}
 .logo-text span{color:var(--accent)}
 .nav-desktop{display:flex;align-items:center;gap:32px}
 .nav-desktop a{font-size:14px;font-weight:500;color:var(--text-primary);transition:color .2s;position:relative}
@@ -50,7 +53,6 @@ ul{list-style:none}
 .nav-desktop a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:var(--accent);transition:width .2s}
 .nav-desktop a:hover::after,.nav-desktop a.active::after{width:100%}
 .header-actions{display:flex;align-items:center;gap:12px}
-.lang-toggle{padding:6px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:#fff;font-size:13px;font-weight:600;cursor:pointer;color:var(--text-primary)}
 .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px}
 .hamburger span{width:24px;height:2px;background:var(--text-primary);transition:all .3s;border-radius:2px}
 .hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
@@ -88,10 +90,6 @@ ul{list-style:none}
 .hero-form-group input:focus{outline:none;border-color:var(--accent);background:rgba(255,255,255,.15);box-shadow:0 0 0 3px rgba(243,156,18,.15)}
 .hero-card-btn{margin-top:12px;width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:16px;font-weight:700;cursor:pointer;transition:all .3s;font-family:inherit}
 .hero-card-btn:hover{background:#E88700;box-shadow:0 4px 15px rgba(243,156,18,.3)}
-.hero-stats{display:flex;justify-content:center;gap:40px;margin-top:30px}
-.hero-stat{text-align:center}
-.hero-stat-num{font-size:28px;font-weight:900;color:#fff}
-.hero-stat-label{font-size:13px;color:rgba(255,255,255,.6);margin-top:2px}
 
 /* CALCULATOR */
 .calculator-section{background:var(--bg-white)}
@@ -114,10 +112,20 @@ ul{list-style:none}
 .calc-result-row span:first-child{font-size:14px;opacity:.8}
 .calc-result-row span:last-child{font-size:16px;font-weight:600}
 .calc-result-row.total span:last-child{font-size:24px;font-weight:900}
+.calc-result-row .sub-note{font-size:12px;opacity:.6;display:block;font-weight:400}
 .calc-error{color:var(--error);font-size:13px;margin-top:8px;display:none}
 .calc-error.show{display:block}
+.calc-rate-note{font-size:12px;color:var(--text-secondary);margin-top:12px;text-align:center}
 .loading-spinner{width:20px;height:20px;border:3px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:inline-block;vertical-align:middle;margin-right:8px}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* REGION SELECTOR */
+.region-selector-wrap{margin-bottom:20px}
+.region-selector-label{font-size:14px;font-weight:500;color:var(--text-primary);margin-bottom:8px;display:block}
+.region-selector{display:flex;gap:8px}
+.region-btn{flex:1;padding:11px 8px;border:2px solid var(--border);border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;background:#fff;color:var(--text-secondary);transition:all .2s;font-family:inherit}
+.region-btn.active{border-color:var(--primary);background:var(--primary);color:#fff}
+.region-btn:hover:not(.active){border-color:var(--primary-light);color:var(--primary)}
 
 /* STATISTICS */
 .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
@@ -129,12 +137,25 @@ ul{list-style:none}
 
 /* HOW IT WORKS */
 .how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;position:relative}
-.how-grid::before{content:'';position:absolute;top:40px;left:12%;right:12%;height:2px;background:linear-gradient(90deg,var(--primary),var(--accent))}
 .step-card{text-align:center;position:relative;background:#fff;padding:32px 24px;border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);border:1px solid var(--border);transition:all .3s}
 .step-card:hover{box-shadow:var(--shadow-md);transform:translateY(-4px)}
 .step-num{width:64px;height:64px;background:linear-gradient(135deg,var(--primary),var(--primary-light));border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:24px;font-weight:900;color:#fff}
+.step-arrow{display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:28px;margin-top:24px}
 .step-card h3{font-size:18px;font-weight:700;color:var(--text-primary);margin-bottom:12px}
 .step-card p{font-size:14px;color:var(--text-secondary);line-height:1.6}
+
+/* TESTIMONIALS */
+.testimonials-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+.review-card{background:#fff;padding:28px;border-radius:var(--radius-lg);border:1px solid var(--border);box-shadow:var(--shadow-sm);transition:all .3s}
+.review-card:hover{box-shadow:var(--shadow-md);transform:translateY(-4px)}
+.review-header{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.review-avatar{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-light));display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;font-weight:700;flex-shrink:0}
+.review-info{}
+.review-name{font-size:16px;font-weight:700;color:var(--text-primary)}
+.review-city{font-size:13px;color:var(--text-secondary);margin-top:2px}
+.review-stars{color:#F39C12;font-size:16px;margin-bottom:10px;letter-spacing:2px}
+.review-text{font-size:14px;color:var(--text-secondary);line-height:1.7}
+.review-tag{display:inline-block;margin-top:12px;padding:4px 10px;background:var(--bg-light);border-radius:20px;font-size:12px;color:var(--text-secondary);font-weight:500}
 
 /* CATEGORIES */
 .categories-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
@@ -143,6 +164,17 @@ ul{list-style:none}
 .cat-icon{font-size:40px;margin-bottom:12px}
 .cat-card h4{font-size:15px;font-weight:600;color:var(--text-primary);margin-bottom:6px}
 .cat-card p{font-size:13px;color:var(--text-secondary)}
+
+/* FAQ */
+.faq-list{max-width:800px;margin:0 auto}
+.faq-item{border:1px solid var(--border);border-radius:var(--radius-md);margin-bottom:12px;overflow:hidden;background:#fff}
+.faq-question{width:100%;text-align:left;padding:20px 24px;background:none;border:none;font-family:inherit;font-size:16px;font-weight:600;color:var(--text-primary);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;transition:background .2s}
+.faq-question:hover{background:var(--bg-light)}
+.faq-icon{width:26px;height:26px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:300;flex-shrink:0;transition:transform .3s;line-height:0;padding-bottom:1px}
+.faq-item.open .faq-icon{transform:rotate(45deg)}
+.faq-answer{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.faq-answer-inner{padding:0 24px 20px;font-size:15px;color:var(--text-secondary);line-height:1.8}
+.faq-item.open .faq-answer{max-height:300px}
 
 /* ABOUT */
 .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
@@ -160,6 +192,10 @@ ul{list-style:none}
 .cta-inner{text-align:center;padding:60px 20px;position:relative;z-index:1}
 .cta-inner h2{font-size:36px;font-weight:900;color:#fff;margin-bottom:16px}
 .cta-inner p{font-size:16px;color:rgba(255,255,255,.8);margin-bottom:32px;max-width:500px;margin-left:auto;margin-right:auto}
+.cta-buttons{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.btn-tg{display:inline-flex;align-items:center;gap:10px;padding:16px 32px;background:#2AABEE;color:#fff;font-size:16px;font-weight:700;border-radius:var(--radius-md);border:none;cursor:pointer;transition:all .3s;font-family:inherit;text-decoration:none}
+.btn-tg:hover{background:#1a9bd8;transform:translateY(-2px);box-shadow:0 8px 25px rgba(42,171,238,.4)}
+.btn-tg svg{width:22px;height:22px;fill:#fff;flex-shrink:0}
 
 /* FOOTER */
 .site-footer{background:var(--primary-dark);padding:60px 0 30px;color:rgba(255,255,255,.7)}
@@ -183,15 +219,22 @@ ul{list-style:none}
 .footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding-top:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
 .footer-bottom p{font-size:13px;opacity:.5}
 
+/* FLOATING TELEGRAM BUTTON */
+.float-tg{position:fixed;bottom:28px;right:28px;z-index:998;width:58px;height:58px;background:linear-gradient(135deg,#2AABEE,#229ED9);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(42,171,238,.45);cursor:pointer;transition:all .3s;text-decoration:none}
+.float-tg:hover{transform:scale(1.1);box-shadow:0 8px 32px rgba(42,171,238,.6)}
+.float-tg svg{width:28px;height:28px;fill:#fff}
+.float-tg-tooltip{position:absolute;right:70px;top:50%;transform:translateY(-50%);background:var(--primary-dark);color:#fff;font-size:13px;font-weight:600;padding:7px 14px;border-radius:var(--radius);white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s}
+.float-tg:hover .float-tg-tooltip{opacity:1}
+
 /* RESPONSIVE */
 @media(max-width:1024px){
 .hero-grid{grid-template-columns:1fr;text-align:center}
 .hero-content h1{font-size:36px}
 .hero-visual{display:none}
-.how-grid::before{display:none}
 .stats-grid{grid-template-columns:repeat(3,1fr)}
 .categories-grid{grid-template-columns:repeat(2,1fr)}
 .footer-grid{grid-template-columns:1fr 1fr}
+.testimonials-grid{grid-template-columns:1fr}
 }
 @media(max-width:768px){
 .nav-desktop{display:none}
@@ -200,7 +243,6 @@ ul{list-style:none}
 .hero-content h1{font-size:32px}
 .hero-content p{font-size:16px}
 .hero-buttons{flex-direction:column;align-items:center}
-.hero-stats{flex-wrap:wrap;gap:24px}
 .hero-card{display:none}
 .calculator-grid{grid-template-columns:1fr}
 .calc-form{padding:24px}
@@ -214,14 +256,14 @@ ul{list-style:none}
 .section-title{font-size:28px}
 .footer-grid{grid-template-columns:1fr}
 .footer-bottom{flex-direction:column;text-align:center}
+.float-tg{bottom:20px;right:20px}
 }
 @media(max-width:480px){
 .hero-content h1{font-size:28px}
 .stat-number{font-size:32px}
-.hero-stats{gap:16px}
-.hero-stat-num{font-size:22px}
 .categories-grid{grid-template-columns:1fr}
 .calc-input-row{grid-template-columns:1fr}
+.cta-buttons{flex-direction:column;align-items:center}
 }
 
 /* ANIMATIONS */
@@ -243,21 +285,24 @@ ul{list-style:none}
 <div class="container">
 <div class="header-inner">
 <a href="#" class="logo">
-<div class="logo-icon">L</div>
+<div class="logo-icon">
+<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+<polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+<line x1="12" y1="22.08" x2="12" y2="12"/>
+</svg>
+</div>
 <div class="logo-text">LOCKED<span>CN</span></div>
 </a>
 <nav class="nav-desktop">
 <a href="#calculator" class="active">Калькулятор</a>
 <a href="#how">Как это работает</a>
 <a href="#categories">Категории</a>
-<a href="#about">О нас</a>
+<a href="#reviews">Отзывы</a>
+<a href="#faq">FAQ</a>
 <a href="#contact">Контакты</a>
 </nav>
 <div class="header-actions">
-<select class="lang-toggle" id="langToggle">
-<option value="ru">RU</option>
-<option value="en">EN</option>
-</select>
 <div class="hamburger" id="hamburger">
 <span></span><span></span><span></span>
 </div>
@@ -268,7 +313,8 @@ ul{list-style:none}
 <a href="#calculator" class="mobile-link">Калькулятор</a>
 <a href="#how" class="mobile-link">Как это работает</a>
 <a href="#categories" class="mobile-link">Категории</a>
-<a href="#about" class="mobile-link">О нас</a>
+<a href="#reviews" class="mobile-link">Отзывы</a>
+<a href="#faq" class="mobile-link">FAQ</a>
 <a href="#contact" class="mobile-link">Контакты</a>
 </div>
 </header>
@@ -284,7 +330,7 @@ ul{list-style:none}
 <button class="btn-primary" onclick="document.getElementById('calculator').scrollIntoView({behavior:'smooth'})">
  Рассчитать стоимость →
 </button>
-<a href="#how" class="btn-secondary">Узнать подробнее</a>
+<a href="https://t.me/lockedcn" target="_blank" class="btn-secondary">Написать в Telegram</a>
 </div>
 </div>
 <div class="hero-visual">
@@ -314,20 +360,6 @@ ul{list-style:none}
 </div>
 </div>
 </div>
-<div class="hero-stats">
-<div class="hero-stat">
-<div class="hero-stat-num">5000+</div>
-<div class="hero-stat-label">Заказов успешно доставлено</div>
-</div>
-<div class="hero-stat">
-<div class="hero-stat-num">98%</div>
-<div class="hero-stat-label">Довольных клиентов</div>
-</div>
-<div class="hero-stat">
-<div class="hero-stat-num">14 дней</div>
-<div class="hero-stat-label">Средний срок доставки</div>
-</div>
-</div>
 </div>
 </section>
 
@@ -337,18 +369,27 @@ ul{list-style:none}
 <div class="section-header">
 <div class="section-label">КАЛЬКУЛЯТОР</div>
 <h2 class="section-title">Рассчитайте стоимость доставки</h2>
-<p class="section-desc">Введите ссылку на товар, его цену и вес — мы покажем полную стоимость с доставкой и комиссией</p>
+<p class="section-desc">Введите ссылку на товар, цену и вес — покажем полную стоимость в рублях с доставкой и комиссией</p>
 </div>
 <div class="calculator-grid">
 <div class="calc-form">
 <div class="calc-title">📋 Данные товара</div>
+
+<div class="region-selector-wrap">
+<span class="region-selector-label">Регион закупки</span>
+<div class="region-selector">
+<button type="button" class="region-btn active" data-region="CN" onclick="selectRegion('CN')">🇨🇳 Китай</button>
+<button type="button" class="region-btn" data-region="EU" onclick="selectRegion('EU')">🇪🇺 Европа</button>
+</div>
+</div>
+
 <div class="calc-form-group">
-<label class="calc-label">Ссылка на товар</label>
+<label class="calc-label">Ссылка на товар <span style="font-weight:400;color:var(--text-secondary)">(необязательно)</span></label>
 <input type="url" class="calc-input" id="calcUrl" placeholder="https://aliexpress.com/item/123456789.html">
 </div>
 <div class="calc-input-row">
 <div class="calc-form-group">
-<label class="calc-label">Цена товара</label>
+<label class="calc-label" id="calcPriceLabel">Цена товара (¥)</label>
 <input type="number" class="calc-input" id="calcPrice" placeholder="0.00" step="0.01" min="0">
 </div>
 <div class="calc-form-group">
@@ -358,6 +399,7 @@ ul{list-style:none}
 </div>
 <button class="calc-btn" id="calcBtn" onclick="calculate()">Рассчитать стоимость</button>
 <div class="calc-error" id="calcError"></div>
+<p class="calc-rate-note">* Курс обмена приблизительный. Точная стоимость подтверждается менеджером.</p>
 </div>
 <div class="calc-result">
 <div class="calc-result-header">
@@ -366,6 +408,7 @@ ul{list-style:none}
 </div>
 <div id="calcResult">
 <div class="calc-result-row"><span>Цена товара</span><span id="resPrice">—</span></div>
+<div class="calc-result-row"><span>В рублях</span><span id="resPriceRub">—</span></div>
 <div class="calc-result-row"><span>Доставка</span><span id="resDelivery">—</span></div>
 <div class="calc-result-row"><span>Комиссия (10%)</span><span id="resCommission">—</span></div>
 <div class="calc-result-row total"><span>К оплате</span><span id="resTotal">—</span></div>
@@ -398,8 +441,8 @@ ul{list-style:none}
 </div>
 <div class="stat-card animate-on-scroll">
 <div class="stat-icon">⚡</div>
-<div class="stat-number" data-target="14" data-suffix="">0</div>
-<div class="stat-label">Средний срок доставки (дней)</div>
+<div class="stat-number" data-target="14" data-suffix=" дн.">0</div>
+<div class="stat-label">Средний срок доставки</div>
 </div>
 </div>
 </div>
@@ -433,8 +476,69 @@ ul{list-style:none}
 </div>
 </section>
 
+<!-- TESTIMONIALS SECTION -->
+<section class="section" id="reviews">
+<div class="container">
+<div class="section-header">
+<div class="section-label">ОТЗЫВЫ</div>
+<h2 class="section-title">Что говорят клиенты</h2>
+<p class="section-desc">Более 5000 успешных заказов — вот что говорят наши покупатели</p>
+</div>
+<div class="testimonials-grid">
+<div class="review-card animate-on-scroll">
+<div class="review-header">
+<div class="review-avatar">А</div>
+<div class="review-info">
+<div class="review-name">Алексей М.</div>
+<div class="review-city">Москва</div>
+</div>
+</div>
+<div class="review-stars">★★★★★</div>
+<p class="review-text">Заказывал PlayStation 5 с японского Amazon. Менеджер всё объяснил, прислал фото перед отправкой. Пришло за 16 дней, упаковка отличная. Буду заказывать ещё!</p>
+<span class="review-tag">🎮 Электроника</span>
+</div>
+<div class="review-card animate-on-scroll">
+<div class="review-header">
+<div class="review-avatar">М</div>
+<div class="review-info">
+<div class="review-name">Мария К.</div>
+<div class="review-city">Санкт-Петербург</div>
+</div>
+</div>
+<div class="review-stars">★★★★★</div>
+<p class="review-text">Заказывала косметику с немецкого Notino. Боялась, что придёт не то, но ребята прислали видео распаковки на складе. Всё пришло в целости за 19 дней. Спасибо!</p>
+<span class="review-tag">💄 Косметика</span>
+</div>
+<div class="review-card animate-on-scroll">
+<div class="review-header">
+<div class="review-avatar">Д</div>
+<div class="review-info">
+<div class="review-name">Дмитрий П.</div>
+<div class="review-city">Екатеринбург</div>
+</div>
+</div>
+<div class="review-stars">★★★★★</div>
+<p class="review-text">Брал одежду с Taobao несколько раз. Цены в 2–3 раза ниже, чем в местных магазинах. Комиссия честная, всё прозрачно. Рекомендую всем друзьям.</p>
+<span class="review-tag">👗 Одежда</span>
+</div>
+<div class="review-card animate-on-scroll">
+<div class="review-header">
+<div class="review-avatar">А</div>
+<div class="review-info">
+<div class="review-name">Анна Р.</div>
+<div class="review-city">Казань</div>
+</div>
+</div>
+<div class="review-stars">★★★★☆</div>
+<p class="review-text">Заказывала детские игрушки Lego с польского сайта. Поддержка отвечала быстро, отслеживание было на каждом этапе. Доставка заняла 21 день — чуть дольше, чем ожидала, но товар в идеале.</p>
+<span class="review-tag">🧸 Игрушки</span>
+</div>
+</div>
+</div>
+</section>
+
 <!-- CATEGORIES SECTION -->
-<section class="section" id="categories">
+<section class="section" id="categories" style="background:#fff">
 <div class="container">
 <div class="section-header">
 <div class="section-label">КАТАЛОГ</div>
@@ -486,6 +590,73 @@ ul{list-style:none}
 </div>
 </section>
 
+<!-- FAQ SECTION -->
+<section class="section" id="faq">
+<div class="container">
+<div class="section-header">
+<div class="section-label">ВОПРОСЫ</div>
+<h2 class="section-title">Часто задаваемые вопросы</h2>
+<p class="section-desc">Ответы на самые популярные вопросы о наших услугах</p>
+</div>
+<div class="faq-list">
+<div class="faq-item">
+<button class="faq-question" onclick="toggleFaq(this)">
+Как оплатить заказ?
+<span class="faq-icon">+</span>
+</button>
+<div class="faq-answer">
+<div class="faq-answer-inner">Мы принимаем оплату переводом на карту (СБП, Сбербанк, Тинькофф) и наличными при получении в вашем городе. Первоначально вносится предоплата за товар, остаток оплачивается по факту доставки в Россию.</div>
+</div>
+</div>
+<div class="faq-item">
+<button class="faq-question" onclick="toggleFaq(this)">
+Что если товар придёт повреждённым?
+<span class="faq-icon">+</span>
+</button>
+<div class="faq-answer">
+<div class="faq-answer-inner">Каждый заказ застрахован. Если товар пришёл с повреждениями по нашей вине — мы полностью компенсируем стоимость или организуем возврат. Перед отправкой мы фотографируем каждый товар, поэтому всегда есть доказательная база.</div>
+</div>
+</div>
+<div class="faq-item">
+<button class="faq-question" onclick="toggleFaq(this)">
+Как отследить мой заказ?
+<span class="faq-icon">+</span>
+</button>
+<div class="faq-answer">
+<div class="faq-answer-inner">После отправки мы выдаём трек-номер для отслеживания. Статус заказа также можно уточнить у менеджера в Telegram — мы на связи 7 дней в неделю и сами уведомляем вас на каждом ключевом этапе.</div>
+</div>
+</div>
+<div class="faq-item">
+<button class="faq-question" onclick="toggleFaq(this)">
+Сколько времени занимает доставка?
+<span class="faq-icon">+</span>
+</button>
+<div class="faq-answer">
+<div class="faq-answer-inner">Из Китая — в среднем 12–20 дней. Из Европы — 18–28 дней. Сроки зависят от загруженности таможни и выбранного способа доставки. Экспресс-доставка доступна за дополнительную плату.</div>
+</div>
+</div>
+<div class="faq-item">
+<button class="faq-question" onclick="toggleFaq(this)">
+Можно ли отменить заказ после оплаты?
+<span class="faq-icon">+</span>
+</button>
+<div class="faq-answer">
+<div class="faq-answer-inner">Отмена возможна до момента выкупа товара у продавца — обычно это 24–48 часов после внесения предоплаты. После выкупа отмена не производится, так как товар уже едет к нам на склад.</div>
+</div>
+</div>
+<div class="faq-item">
+<button class="faq-question" onclick="toggleFaq(this)">
+Доставляете ли в страны СНГ?
+<span class="faq-icon">+</span>
+</button>
+<div class="faq-answer">
+<div class="faq-answer-inner">Да, работаем с Беларусью, Казахстаном, Арменией и рядом других стран СНГ. Условия и сроки уточняйте у менеджера — они зависят от конкретной страны назначения.</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
 <!-- ABOUT SECTION -->
 <section class="section" id="about" style="background:#fff">
 <div class="container">
@@ -513,7 +684,7 @@ ul{list-style:none}
 </div>
 <div class="about-highlight">
 <div class="about-check">✓</div>
-<span>Средний срок доставки 12-20 дней</span>
+<span>Средний срок доставки 12–20 дней</span>
 </div>
 </div>
 <div class="about-visual">
@@ -552,8 +723,14 @@ ul{list-style:none}
 <div class="container">
 <div class="cta-inner animate-on-scroll">
 <h2>Готовы сделать свой первый заказ?</h2>
-<p>Отправьте ссылку на товар, и мы рассчитаем стоимость доставки за пару минут</p>
-<button class="btn-primary" onclick="document.getElementById('calculator').scrollIntoView({behavior:'smooth'})" style="margin:0 auto">Начать расчёт</button>
+<p>Напишите нам в Telegram — менеджер ответит в течение нескольких минут и поможет с расчётом</p>
+<div class="cta-buttons">
+<a href="https://t.me/lockedcn" target="_blank" class="btn-tg">
+<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.26 13.939l-2.95-.924c-.64-.203-.654-.64.135-.954l11.57-4.461c.537-.194 1.006.131.879.621z"/></svg>
+Написать в Telegram
+</a>
+<button class="btn-primary" onclick="document.getElementById('calculator').scrollIntoView({behavior:'smooth'})" style="margin:0">Рассчитать стоимость</button>
+</div>
 </div>
 </div>
 </section>
@@ -564,15 +741,20 @@ ul{list-style:none}
 <div class="footer-grid">
 <div class="footer-brand">
 <div class="logo">
-<div class="logo-icon" style="background:var(--accent)">L</div>
+<div class="logo-icon" style="background:var(--accent)">
+<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+<polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+<line x1="12" y1="22.08" x2="12" y2="12"/>
+</svg>
+</div>
 <div class="logo-text" style="color:#fff"><span style="color:var(--accent)">LOCKED</span>CN</div>
 </div>
 <p>Надёжный сервис закупок товаров из Китая и Европы. 5000+ довольных клиентов по всей России и СНГ.</p>
 <div class="social-links">
 <a href="#" class="social-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3V2z"/></svg></a>
 <a href="#" class="social-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
-<a href="#" class="social-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22.54 6.42a2.78 2.78 0 00-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 00-1.94 2A29 29 0 001 11.75a29 29 0 00.46 5.33A2.78 2.78 0 003.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 001.94-2 29 29 0 00.46-5.25 29 29 0 00-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg></a>
-<a href="#" class="social-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg></a>
+<a href="https://t.me/lockedcn" class="social-link" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg></a>
 </div>
 </div>
 <div class="footer-col">
@@ -581,6 +763,8 @@ ul{list-style:none}
 <li><a href="#calculator">Калькулятор</a></li>
 <li><a href="#how">Как это работает</a></li>
 <li><a href="#categories">Категории</a></li>
+<li><a href="#reviews">Отзывы</a></li>
+<li><a href="#faq">FAQ</a></li>
 <li><a href="#about">О нас</a></li>
 </ul>
 </div>
@@ -592,7 +776,7 @@ ul{list-style:none}
 </div>
 <div class="contact-item">
 <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg></div>
-<div class="contact-text"><span>Telegram</span><a href="#">@lockedcn</a></div>
+<div class="contact-text"><span>Telegram</span><a href="https://t.me/lockedcn" target="_blank">@lockedcn</a></div>
 </div>
 <div class="contact-item">
 <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg></div>
@@ -612,110 +796,170 @@ ul{list-style:none}
 </div>
 </div>
 <div class="footer-bottom">
-<p>© 2025 LOCKEDCN. Все права защищены.</p>
+<p>© 2026 LOCKEDCN. Все права защищены.</p>
 <p>Расчёт приблизительный. Точная цена после подтверждения заказа.</p>
 </div>
 </div>
 </footer>
 
-<script>
-const RATES={CN:{name:'Китай',pricePerKg:350,symbol:'¥'},EU:{name:'Европа',pricePerKg:500,symbol:'€'}};
-const china=['taobao.com','tmall.com','jd.com','1688.com','aliexpress.com','weidian.com','poizon.com','suning.com','pinduoduo.com'];
-const europe=['amazon.de','amazon.co.uk','amazon.fr','amazon.it','amazon.es','amazon.com','ebay.co.uk','ebay.de','zalando.de','asos.com','zara.com','hm.com'];
-function detectRegion(u){u=u.toLowerCase();if(china.some(d=>u.includes(d)))return'CN';if(europe.some(d=>u.includes(d)))return'EU';return null}
+<!-- FLOATING TELEGRAM BUTTON -->
+<a href="https://t.me/lockedcn" target="_blank" class="float-tg">
+<span class="float-tg-tooltip">Написать в Telegram</span>
+<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.26 13.939l-2.95-.924c-.64-.203-.654-.64.135-.954l11.57-4.461c.537-.194 1.006.131.879.621z"/></svg>
+</a>
 
-function calculate(){
-const url=document.getElementById('calcUrl').value;
-const price=parseFloat(document.getElementById('calcPrice').value);
-const weight=parseFloat(document.getElementById('calcWeight').value)||0;
-const errEl=document.getElementById('calcError');
-errEl.classList.remove('show');
-if(!url||!price){errEl.textContent='Пожалуйста, заполните ссылку и цену товара';errEl.classList.add('show');return}
-if(price<=0){errEl.textContent='Цена должна быть больше 0';errEl.classList.add('show');return}
-if(weight<=0){errEl.textContent='Вес должен быть больше 0';errEl.classList.add('show');return}
-let region=detectRegion(url);
-if(!region){const c=prompt('Регион не определён. Введите: 1 - Китай, 2 - Европа');if(c==='1')region='CN';else if(c==='2')region='EU';else{errEl.textContent='Укажите регион';errEl.classList.add('show');return}}
-document.getElementById('calcBtn').disabled=true;
-document.getElementById('calcResult').style.display='none';
-document.getElementById('calcLoading').style.display='block';
-setTimeout(()=>{
-const rate=RATES[region];
-const delivery=weight*rate.pricePerKg;
-const commission=price*0.1;
-const total=price+delivery+commission;
-const badge=document.getElementById('regionBadge');
-badge.className='region-badge';
-badge.textContent=region==='CN'?'🇨🇳 Китай':'🇪🇺 Европа';
-document.getElementById('resPrice').textContent=price.toFixed(2)+' '+rate.symbol;
-document.getElementById('resDelivery').textContent=delivery.toFixed(2)+' ₽';
-document.getElementById('resCommission').textContent=commission.toFixed(2)+' '+rate.symbol;
-document.getElementById('resTotal').textContent=total.toFixed(2)+' ₽';
-document.getElementById('calcLoading').style.display='none';
-document.getElementById('calcResult').style.display='block';
-document.getElementById('calcBtn').disabled=false;
-document.getElementById('calcResult').scrollIntoView({behavior:'smooth',block:'nearest'});
-},800);
+<script>
+const RATES = {
+  CN: { name:'Китай', pricePerKg:350, exchangeRate:13.5, symbol:'¥', flag:'🇨🇳' },
+  EU: { name:'Европа', pricePerKg:500, exchangeRate:100, symbol:'€', flag:'🇪🇺' }
+};
+const chinaHosts = ['taobao.com','tmall.com','jd.com','1688.com','aliexpress.com','weidian.com','poizon.com','suning.com','pinduoduo.com'];
+const europeHosts = ['amazon.de','amazon.co.uk','amazon.fr','amazon.it','amazon.es','amazon.com','ebay.co.uk','ebay.de','zalando.de','asos.com','zara.com','hm.com','notino','aboutyou'];
+
+let selectedRegion = 'CN';
+
+function selectRegion(region) {
+  selectedRegion = region;
+  document.querySelectorAll('.region-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.region === region);
+  });
+  const rate = RATES[region];
+  document.getElementById('calcPriceLabel').textContent = 'Цена товара (' + rate.symbol + ')';
+  document.getElementById('regionBadge').textContent = rate.flag + ' ' + rate.name;
 }
 
-// Header scroll
-window.addEventListener('scroll',()=>{
-const h=document.getElementById('header');
-h.classList.toggle('scrolled',window.scrollY>50);
+function detectRegion(url) {
+  if (!url) return null;
+  const u = url.toLowerCase();
+  if (chinaHosts.some(d => u.includes(d))) return 'CN';
+  if (europeHosts.some(d => u.includes(d))) return 'EU';
+  return null;
+}
+
+function formatRub(n) {
+  return n.toLocaleString('ru-RU', { maximumFractionDigits:0 }) + ' ₽';
+}
+
+function calculate() {
+  const url = document.getElementById('calcUrl').value.trim();
+  const price = parseFloat(document.getElementById('calcPrice').value);
+  const weight = parseFloat(document.getElementById('calcWeight').value);
+  const errEl = document.getElementById('calcError');
+  errEl.classList.remove('show');
+
+  if (!price || price <= 0) {
+    errEl.textContent = 'Пожалуйста, укажите цену товара';
+    errEl.classList.add('show');
+    return;
+  }
+  if (!weight || weight <= 0) {
+    errEl.textContent = 'Пожалуйста, укажите вес товара';
+    errEl.classList.add('show');
+    return;
+  }
+
+  const detected = detectRegion(url);
+  if (detected && detected !== selectedRegion) {
+    selectRegion(detected);
+  }
+  const region = detected || selectedRegion;
+  const rate = RATES[region];
+
+  document.getElementById('calcBtn').disabled = true;
+  document.getElementById('calcResult').style.display = 'none';
+  document.getElementById('calcLoading').style.display = 'block';
+
+  setTimeout(() => {
+    const priceRub = price * rate.exchangeRate;
+    const delivery = weight * rate.pricePerKg;
+    const commission = priceRub * 0.1;
+    const total = priceRub + delivery + commission;
+
+    const badge = document.getElementById('regionBadge');
+    badge.textContent = rate.flag + ' ' + rate.name;
+
+    document.getElementById('resPrice').textContent = price.toLocaleString('ru-RU', {maximumFractionDigits:2}) + ' ' + rate.symbol;
+    document.getElementById('resPriceRub').textContent = formatRub(priceRub);
+    document.getElementById('resDelivery').textContent = formatRub(delivery);
+    document.getElementById('resCommission').textContent = formatRub(commission);
+    document.getElementById('resTotal').textContent = formatRub(total);
+
+    document.getElementById('calcLoading').style.display = 'none';
+    document.getElementById('calcResult').style.display = 'block';
+    document.getElementById('calcBtn').disabled = false;
+    document.getElementById('calcResult').scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }, 700);
+}
+
+// Auto-detect region on URL input
+document.getElementById('calcUrl').addEventListener('blur', function() {
+  const detected = detectRegion(this.value);
+  if (detected) selectRegion(detected);
 });
 
-// Smooth scroll for nav links
+// Header scroll
+window.addEventListener('scroll', () => {
+  document.getElementById('header').classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// Smooth scroll
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const targetId = this.getAttribute('href');
-        if (targetId === '#') return;
-        const target = document.querySelector(targetId);
-        if (target) {
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-        // Close mobile menu after click
-        document.getElementById('hamburger').classList.remove('open');
-        document.getElementById('mobileMenu').classList.remove('active');
-    });
+  anchor.addEventListener('click', function(e) {
+    const targetId = this.getAttribute('href');
+    if (targetId === '#') return;
+    e.preventDefault();
+    const target = document.querySelector(targetId);
+    if (target) target.scrollIntoView({ behavior:'smooth', block:'start' });
+    document.getElementById('hamburger').classList.remove('open');
+    document.getElementById('mobileMenu').classList.remove('active');
+  });
 });
 
 // Mobile menu
-document.getElementById('hamburger').addEventListener('click',function(){
-this.classList.toggle('open');
-document.getElementById('mobileMenu').classList.toggle('active');
+document.getElementById('hamburger').addEventListener('click', function() {
+  this.classList.toggle('open');
+  document.getElementById('mobileMenu').classList.toggle('active');
 });
-document.querySelectorAll('.mobile-link').forEach(l=>{
-l.addEventListener('click',()=>{
-document.getElementById('hamburger').classList.remove('open');
-document.getElementById('mobileMenu').classList.remove('active');
+document.querySelectorAll('.mobile-link').forEach(l => {
+  l.addEventListener('click', () => {
+    document.getElementById('hamburger').classList.remove('open');
+    document.getElementById('mobileMenu').classList.remove('active');
+  });
 });
-});
+
+// FAQ accordion
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
 
 // Scroll animations
-const observer=new IntersectionObserver((entries)=>{
-entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')});
-},{threshold:0.1});
-document.querySelectorAll('.animate-on-scroll').forEach(el=>observer.observe(el));
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
 
 // Counter animation
-const counterObserver=new IntersectionObserver((entries)=>{
-entries.forEach(entry=>{
-if(entry.isIntersecting){
-const el=entry.target;
-const target=parseInt(el.dataset.target);
-const suffix=el.dataset.suffix||'';
-let current=0;
-const step=Math.ceil(target/40);
-const interval=setInterval(()=>{
-current=Math.min(current+step,target);
-el.textContent=current+suffix;
-if(current>=target)clearInterval(interval);
-},30);
-counterObserver.unobserve(el);
-}
-});
-},{threshold:0.5});
-document.querySelectorAll('.stat-number').forEach(el=>counterObserver.observe(el));
+const counterObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const el = entry.target;
+      const target = parseInt(el.dataset.target);
+      const suffix = el.dataset.suffix || '';
+      let current = 0;
+      const step = Math.ceil(target / 40);
+      const interval = setInterval(() => {
+        current = Math.min(current + step, target);
+        el.textContent = current + suffix;
+        if (current >= target) clearInterval(interval);
+      }, 30);
+      counterObserver.unobserve(el);
+    }
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('.stat-number').forEach(el => counterObserver.observe(el));
 </script>
 </body>
 </html>
