@@ -778,25 +778,11 @@ btn.textContent='ОТПРАВЛЯЕМ...';
 const text=`🛍 НОВЫЙ ЗАКАЗ\n\n🔗 Ссылка: ${link}\n📦 Название: ${name||'—'}\n📐 Размер: ${size||'—'}\n🎨 Цвет: ${color||'—'}\n🔢 Кол-во: ${qty}\n💬 Telegram: ${tg}\n📝 Комментарий: ${comment||'—'}`;
 
 try{
-  const r=await fetch(`https://api.telegram.org/bot8807117876:AAHO0fgIv-tq6WzmwRd88rHpB-CI1dQz6gw/sendMessage`,{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({chat_id:7976679590,text})
-  });
-  const data=await r.json();
-  if(data.ok){
-    await saveOrderToSupabase({link,name,size,color,qty,tg,comment});
-    document.getElementById('orderForm').style.display='none';
-    document.getElementById('success').classList.add('on');
-  } else {
-    throw new Error('API error');
-  }
-} catch(err){
-  const msg=encodeURIComponent(text);
-  window.open(`https://t.me/lockedcn?text=${msg}`,'_blank');
   await saveOrderToSupabase({link,name,size,color,qty,tg,comment});
   document.getElementById('orderForm').style.display='none';
   document.getElementById('success').classList.add('on');
+} catch(err){
+  alert('Ошибка при отправке заявки. Попробуйте ещё раз.');
 } finally {
   btn.disabled=false;
   btn.textContent='ОТПРАВИТЬ ЗАПРОС';
