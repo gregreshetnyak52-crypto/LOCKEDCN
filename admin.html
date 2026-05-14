@@ -329,7 +329,8 @@ async function sendReply(){
   const content=input.value.trim();
   if(!content)return;
   input.value='';
-  await sb.from('messages').insert({user_id:selectedUserId,content,from_admin:true});
+  const {error}=await sb.from('messages').insert({user_id:selectedUserId,content,from_admin:true});
+  if(error){alert('Ошибка: '+error.message);console.error(error);}
 }
 
 function subscribeMessages(){
