@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Личный кабинет — LOCKEDCN</title>
+<meta name="theme-color" content="#0a0a0a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#0a0a0a;--bg2:#111111;--bg3:#161616;--bg4:#1e1e1e;
+--w:#f5f5f5;--g:#8a8a8a;--l:#c4c4c4;
+--line:rgba(245,245,245,0.08);--soft:rgba(245,245,245,0.04);--panel:rgba(245,245,245,0.035);
+--accent:#c8b98a;--signal:#5fd3c3;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter Tight',sans-serif;background:var(--bg);color:var(--w);overflow-x:hidden;-webkit-font-smoothing:antialiased;min-height:100vh}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+::selection{background:rgba(245,245,245,0.1)}
+::-webkit-scrollbar{width:2px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:rgba(245,245,245,0.1)}
+
+/* HEADER */
+.header{position:fixed;top:0;left:0;right:0;z-index:100;padding:22px 48px;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(180deg,rgba(10,10,10,0.9),rgba(10,10,10,0.7));backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
+.logo{font-size:15px;font-weight:900}
+.logo span{opacity:0.35}
+.header-right{display:flex;align-items:center;gap:20px}
+.hdr-user-name{font-size:11px;font-weight:700;text-transform:uppercase;color:rgba(245,245,245,0.54)}
+.hdr-back{font-size:11px;font-weight:700;text-transform:uppercase;color:rgba(245,245,245,0.54);transition:color .3s}
+.hdr-back:hover{color:var(--w)}
+.hdr-logout{font-size:11px;font-weight:700;text-transform:uppercase;color:rgba(245,245,245,0.35);cursor:pointer;transition:color .3s}
+.hdr-logout:hover{color:var(--w)}
+
+/* LAYOUT */
+.cab{display:grid;grid-template-columns:260px 1fr;min-height:100vh;padding-top:80px}
+
+/* SIDEBAR */
+.cab-side{position:sticky;top:80px;height:calc(100vh - 80px);background:var(--bg2);border-right:1px solid var(--line);padding:40px 32px;display:flex;flex-direction:column;gap:0}
+.cab-user{margin-bottom:40px}
+.cab-avatar{width:52px;height:52px;background:rgba(200,185,138,0.15);border:1px solid rgba(200,185,138,0.3);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:var(--accent);margin-bottom:14px}
+.cab-uname{font-size:16px;font-weight:800;margin-bottom:4px;line-height:1.2}
+.cab-uemail{font-size:12px;color:var(--g)}
+.cab-nav{display:flex;flex-direction:column;gap:2px;flex:1}
+.cab-nav-item{padding:14px 16px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0;color:rgba(245,245,245,0.42);cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:space-between;border-left:2px solid transparent}
+.cab-nav-item:hover{color:var(--w);background:rgba(245,245,245,0.03)}
+.cab-nav-item.on{color:var(--w);border-left-color:var(--accent);background:rgba(245,245,245,0.04)}
+.cab-count{background:var(--accent);color:#0a0a0a;font-size:10px;font-weight:900;padding:2px 7px;min-width:20px;text-align:center}
+.cab-logout-btn{margin-top:auto;padding:12px 16px;font-size:11px;font-weight:700;text-transform:uppercase;color:rgba(245,245,245,0.3);text-align:left;cursor:pointer;transition:color .3s;border:1px solid transparent}
+.cab-logout-btn:hover{color:var(--w);border-color:var(--line)}
+
+/* MAIN */
+.cab-main{padding:48px 56px;background:var(--bg)}
+.cab-panel{display:none}
+.cab-panel.on{display:block}
+.cab-panel-title{font-size:28px;font-weight:900;margin-bottom:36px;letter-spacing:0}
+
+/* ORDERS */
+.orders-empty{font-size:14px;color:var(--g);padding:60px 0;text-align:center}
+.orders-list{display:flex;flex-direction:column;gap:12px}
+.order-card{background:var(--bg2);border:1px solid var(--line);padding:28px 32px;transition:border .3s}
+.order-card:hover{border-color:rgba(245,245,245,0.14)}
+.order-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.order-card-date{font-size:12px;color:var(--g)}
+.order-status{font-size:10px;font-weight:800;text-transform:uppercase;padding:4px 10px}
+.s-new{background:rgba(200,185,138,0.15);color:var(--accent)}
+.s-processing{background:rgba(95,211,195,0.12);color:var(--signal)}
+.s-paid{background:rgba(100,200,100,0.12);color:#6dc96d}
+.s-delivered{background:rgba(245,245,245,0.06);color:var(--g)}
+.order-card-link{font-size:13px;color:rgba(245,245,245,0.7);word-break:break-all;margin-bottom:10px}
+.order-card-meta{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:12px;color:var(--g)}
+.order-card-comment{margin-top:12px;font-size:13px;color:rgba(245,245,245,0.5);font-style:italic;padding-top:12px;border-top:1px solid var(--line)}
+
+/* PROFILE */
+.profile-form{max-width:440px;display:flex;flex-direction:column;gap:0}
+.pfl{font-size:11px;font-weight:700;text-transform:uppercase;color:rgba(245,245,245,0.42);display:block;margin-bottom:7px}
+.pfi{width:100%;padding:14px 15px;background:rgba(245,245,245,0.04);border:1px solid var(--line);color:var(--w);font-size:14px;font-family:inherit;margin-bottom:16px;outline:none;transition:border .3s}
+.pfi:focus{border-color:rgba(245,245,245,0.28)}
+.pfi::placeholder{color:rgba(245,245,245,0.22)}
+.pfi:disabled{opacity:0.4;cursor:not-allowed}
+.pf-save{padding:14px 32px;background:var(--w);color:#0a0a0a;font-size:11px;font-weight:900;text-transform:uppercase;cursor:pointer;border:none;font-family:inherit;transition:all .3s;margin-top:4px;align-self:flex-start}
+.pf-save:hover{background:#e5e5e5;transform:translateY(-1px)}
+.pf-ok{font-size:12px;color:var(--signal);margin-top:12px;min-height:18px}
+
+/* CHAT */
+.chat-wrap{display:flex;flex-direction:column;height:calc(100vh - 280px);min-height:400px;background:var(--bg2);border:1px solid var(--line)}
+.chat-messages{flex:1;overflow-y:auto;padding:28px;display:flex;flex-direction:column;gap:16px}
+.chat-messages::-webkit-scrollbar{width:2px}
+.chat-messages::-webkit-scrollbar-thumb{background:rgba(245,245,245,0.08)}
+.chat-msg{display:flex;flex-direction:column;max-width:70%}
+.from-user{align-self:flex-end;align-items:flex-end}
+.from-admin{align-self:flex-start;align-items:flex-start}
+.chat-bubble{padding:12px 16px;font-size:14px;line-height:1.5}
+.from-user .chat-bubble{background:rgba(245,245,245,0.08);border:1px solid var(--line)}
+.from-admin .chat-bubble{background:rgba(200,185,138,0.1);border:1px solid rgba(200,185,138,0.2);color:var(--w)}
+.chat-time{font-size:10px;color:var(--g);margin-top:4px}
+.chat-empty{text-align:center;font-size:13px;color:var(--g);padding:40px 0}
+.chat-compose{display:flex;border-top:1px solid var(--line)}
+.chat-input{flex:1;padding:18px 20px;background:transparent;border:none;color:var(--w);font-size:14px;font-family:inherit;outline:none}
+.chat-input::placeholder{color:rgba(245,245,245,0.25)}
+.chat-send{padding:18px 28px;background:var(--w);color:#0a0a0a;font-size:11px;font-weight:900;text-transform:uppercase;cursor:pointer;border:none;font-family:inherit;transition:background .3s;flex-shrink:0}
+.chat-send:hover{background:#e5e5e5}
+.chat-admin-note{font-size:11px;color:var(--g);padding:12px 28px;border-bottom:1px solid var(--line);text-align:center}
+
+/* LOADER */
+.cab-loader{display:flex;align-items:center;justify-content:center;height:200px;font-size:12px;color:var(--g)}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+.header{padding:20px 24px}
+.cab{grid-template-columns:1fr;padding-top:70px}
+.cab-side{position:static;height:auto;padding:28px 24px;flex-direction:row;flex-wrap:wrap;gap:20px;align-items:center}
+.cab-user{margin-bottom:0;display:flex;align-items:center;gap:14px}
+.cab-avatar{width:40px;height:40px;font-size:14px;margin-bottom:0;flex-shrink:0}
+.cab-uname{font-size:14px}
+.cab-nav{flex-direction:row;gap:0;width:100%;border-top:1px solid var(--line);padding-top:16px}
+.cab-nav-item{border-left:none;border-bottom:2px solid transparent}
+.cab-nav-item.on{border-left-color:transparent;border-bottom-color:var(--accent)}
+.cab-logout-btn{margin-top:0}
+.cab-main{padding:32px 24px}
+.chat-wrap{height:calc(100vh - 360px)}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+<a href="index.html" class="logo">LOCKED<span>CN</span></a>
+<div class="header-right">
+<span class="hdr-user-name" id="hdrUserName"></span>
+<a href="index.html" class="hdr-back">← НА САЙТ</a>
+<span class="hdr-logout" onclick="doLogout()">ВЫЙТИ</span>
+</div>
+</header>
+
+<div class="cab">
+<aside class="cab-side">
+<div class="cab-user">
+<div class="cab-avatar" id="cabAvatar">?</div>
+<div>
+<div class="cab-uname" id="cabName">—</div>
+<div class="cab-uemail" id="cabEmail">—</div>
+</div>
+</div>
+<nav class="cab-nav">
+<div class="cab-nav-item on" onclick="showTab('orders',this)">
+<span>МОИ ЗАКАЗЫ</span><span class="cab-count" id="orderCount">—</span>
+</div>
+<div class="cab-nav-item" onclick="showTab('profile',this)">ПРОФИЛЬ</div>
+<div class="cab-nav-item" onclick="showTab('chat',this)">ЧАТ С МЕНЕДЖЕРОМ</div>
+</nav>
+<button class="cab-logout-btn" onclick="doLogout()">ВЫЙТИ ИЗ АККАУНТА</button>
+</aside>
+
+<main class="cab-main">
+
+<div class="cab-panel on" id="tab-orders">
+<div class="cab-panel-title">МОИ ЗАКАЗЫ</div>
+<div class="cab-loader" id="ordersLoader">Загрузка...</div>
+<div class="orders-list" id="ordersList" style="display:none"></div>
+<div class="orders-empty" id="ordersEmpty" style="display:none">У вас пока нет заказов.<br>Заполните форму на сайте, чтобы оставить первый запрос.</div>
+</div>
+
+<div class="cab-panel" id="tab-profile">
+<div class="cab-panel-title">ПРОФИЛЬ</div>
+<div class="profile-form">
+<label class="pfl">Имя</label>
+<input class="pfi" type="text" id="pfName" placeholder="Ваше имя">
+<label class="pfl">Telegram</label>
+<input class="pfi" type="text" id="pfTg" placeholder="@username">
+<label class="pfl">Email</label>
+<input class="pfi" type="email" id="pfEmail" placeholder="" disabled>
+<button class="pf-save" onclick="saveProfile()">СОХРАНИТЬ</button>
+<div class="pf-ok" id="pfOk"></div>
+</div>
+</div>
+
+<div class="cab-panel" id="tab-chat">
+<div class="cab-panel-title">ЧАТ С МЕНЕДЖЕРОМ</div>
+<div class="chat-wrap">
+<div class="chat-admin-note">Менеджер ответит в ближайшее время</div>
+<div class="chat-messages" id="chatMessages">
+<div class="chat-empty" id="chatEmpty">Напишите сообщение — менеджер ответит в ближайшее время</div>
+</div>
+<div class="chat-compose">
+<input class="chat-input" type="text" id="chatInput" placeholder="Напишите сообщение...">
+<button class="chat-send" onclick="sendMessage()">ОТПРАВИТЬ</button>
+</div>
+</div>
+</div>
+
+</main>
+</div>
+
+<script>
+// ─── SUPABASE CONFIG ────────────────────────────────────────────────────────
+// Замените значения на данные вашего проекта: supabase.com → Settings → API
+const SUPABASE_URL='https://dlbygehjlspqevtkidwg.supabase.co';
+const SUPABASE_ANON_KEY='sb_publishable_SqF4vd9mguowKuSwwaE7Uw_Jn0LbeIC';
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+
+// ─── INIT ───────────────────────────────────────────────────────────────────
+let currentUser=null;
+
+sb.auth.getSession().then(({data:{session}})=>{
+  if(!session){window.location.href='index.html';return}
+  init(session);
+});
+
+async function init(session){
+  currentUser=session.user;
+  document.getElementById('hdrUserName').textContent=currentUser.email;
+  document.getElementById('pfEmail').value=currentUser.email;
+
+  const {data:profile}=await sb.from('profiles').select('*').eq('id',currentUser.id).single();
+  if(profile){
+    document.getElementById('pfName').value=profile.full_name||'';
+    document.getElementById('pfTg').value=profile.telegram||'';
+    const initials=(profile.full_name||currentUser.email)[0].toUpperCase();
+    document.getElementById('cabAvatar').textContent=initials;
+    document.getElementById('cabName').textContent=profile.full_name||'Пользователь';
+    document.getElementById('hdrUserName').textContent=profile.full_name||currentUser.email;
+  }
+  document.getElementById('cabEmail').textContent=currentUser.email;
+
+  loadOrders();
+  loadMessages();
+
+  sb.channel('user-messages-'+currentUser.id)
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',filter:`user_id=eq.${currentUser.id}`},
+      payload=>{appendMessage(payload.new,true)})
+    .subscribe();
+}
+
+// ─── ORDERS ─────────────────────────────────────────────────────────────────
+async function loadOrders(){
+  const {data:orders}=await sb.from('orders').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false});
+  document.getElementById('ordersLoader').style.display='none';
+  const list=document.getElementById('ordersList');
+  const empty=document.getElementById('ordersEmpty');
+  if(!orders||orders.length===0){empty.style.display='block';return}
+  document.getElementById('orderCount').textContent=orders.length;
+  list.style.display='flex';
+  list.innerHTML=orders.map(o=>`
+    <div class="order-card">
+      <div class="order-card-head">
+        <div class="order-card-date">${fmtDate(o.created_at)}</div>
+        <div class="order-status s-${o.status}">${statusLabel(o.status)}</div>
+      </div>
+      <div class="order-card-link"><a href="${esc(o.link)}" target="_blank" style="color:var(--signal)">${esc(o.link)}</a></div>
+      <div class="order-card-meta">
+        ${o.name?`<span>${esc(o.name)}</span>`:''}
+        ${o.size?`<span>Размер: ${esc(o.size)}</span>`:''}
+        ${o.color?`<span>Цвет: ${esc(o.color)}</span>`:''}
+        ${o.qty?`<span>Кол-во: ${o.qty}</span>`:''}
+        ${o.telegram?`<span>TG: ${esc(o.telegram)}</span>`:''}
+      </div>
+      ${o.comment?`<div class="order-card-comment">${esc(o.comment)}</div>`:''}
+    </div>
+  `).join('');
+}
+
+function statusLabel(s){
+  return{new:'НОВЫЙ',processing:'В РАБОТЕ',paid:'ОПЛАЧЕН',delivered:'ДОСТАВЛЕН'}[s]||(s||'НОВЫЙ');
+}
+function fmtDate(d){
+  return new Date(d).toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
+}
+
+// ─── PROFILE ────────────────────────────────────────────────────────────────
+async function saveProfile(){
+  const name=document.getElementById('pfName').value.trim();
+  const tg=document.getElementById('pfTg').value.trim();
+  const ok=document.getElementById('pfOk');
+  await sb.from('profiles').upsert({id:currentUser.id,full_name:name,telegram:tg});
+  document.getElementById('cabName').textContent=name||'Пользователь';
+  document.getElementById('cabAvatar').textContent=(name||currentUser.email)[0].toUpperCase();
+  document.getElementById('hdrUserName').textContent=name||currentUser.email;
+  ok.textContent='Изменения сохранены';
+  setTimeout(()=>ok.textContent='',3000);
+}
+
+// ─── CHAT ───────────────────────────────────────────────────────────────────
+async function loadMessages(){
+  const {data:msgs}=await sb.from('messages').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:true});
+  if(msgs&&msgs.length>0){
+    document.getElementById('chatEmpty').style.display='none';
+    msgs.forEach(m=>appendMessage(m,false));
+    const c=document.getElementById('chatMessages');
+    c.scrollTop=c.scrollHeight;
+  }
+}
+
+function appendMessage(msg,scroll){
+  document.getElementById('chatEmpty').style.display='none';
+  const c=document.getElementById('chatMessages');
+  const div=document.createElement('div');
+  div.className=`chat-msg ${msg.from_admin?'from-admin':'from-user'}`;
+  div.innerHTML=`<div class="chat-bubble">${esc(msg.content)}</div><div class="chat-time">${new Date(msg.created_at).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})}</div>`;
+  c.appendChild(div);
+  if(scroll)c.scrollTop=c.scrollHeight;
+}
+
+async function sendMessage(){
+  const input=document.getElementById('chatInput');
+  const content=input.value.trim();
+  if(!content)return;
+  input.value='';
+  const {error}=await sb.from('messages').insert({user_id:currentUser.id,content,from_admin:false});
+  if(error)console.error(error);
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('chatInput')?.addEventListener('keydown',e=>{
+    if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}
+  });
+});
+
+// ─── TABS ───────────────────────────────────────────────────────────────────
+function showTab(name,el){
+  document.querySelectorAll('.cab-nav-item').forEach(i=>i.classList.remove('on'));
+  el.classList.add('on');
+  document.querySelectorAll('.cab-panel').forEach(p=>p.classList.remove('on'));
+  document.getElementById('tab-'+name).classList.add('on');
+}
+
+// ─── LOGOUT ─────────────────────────────────────────────────────────────────
+async function doLogout(){
+  await sb.auth.signOut();
+  window.location.href='index.html';
+}
+
+// ─── UTILS ──────────────────────────────────────────────────────────────────
+function esc(s){
+  if(!s)return'';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>

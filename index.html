@@ -251,7 +251,31 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 .sticky{bottom:16px;right:16px;padding:12px 18px;font-size:10px}
 .modal{padding:24px}
 }
+/* AUTH */
+.auth-overlay{position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.78);backdrop-filter:blur(14px)}
+.auth-overlay.on{display:flex}
+.auth-box{background:var(--bg2);border:1px solid var(--line);width:min(420px,92vw);padding:48px 40px;position:relative}
+.auth-close{position:absolute;top:18px;right:18px;font-size:24px;cursor:pointer;color:var(--g);line-height:1;transition:color .3s}
+.auth-close:hover{color:var(--w)}
+.auth-tabs{display:flex;margin-bottom:36px;border-bottom:1px solid var(--line)}
+.auth-tab{padding:0 0 12px;margin-right:24px;font-size:11px;font-weight:800;letter-spacing:0;text-transform:uppercase;color:rgba(245,245,245,0.35);cursor:pointer;border-bottom:2px solid transparent;transition:all .3s}
+.auth-tab.on{color:var(--w);border-bottom-color:var(--w)}
+.auth-panel{display:none}
+.auth-panel.on{display:block}
+.auth-flabel{font-size:11px;font-weight:700;letter-spacing:0;text-transform:uppercase;color:rgba(245,245,245,0.42);display:block;margin-bottom:7px}
+.auth-input{width:100%;padding:14px 15px;background:rgba(245,245,245,0.04);border:1px solid var(--line);color:var(--w);font-size:14px;font-family:inherit;margin-bottom:12px;outline:none;transition:border .3s}
+.auth-input:focus{border-color:rgba(245,245,245,0.28)}
+.auth-input::placeholder{color:rgba(245,245,245,0.22)}
+.auth-btn{width:100%;padding:15px;background:var(--w);color:#0a0a0a;font-size:11px;font-weight:900;letter-spacing:0;text-transform:uppercase;cursor:pointer;border:none;font-family:inherit;margin-top:6px;transition:all .3s}
+.auth-btn:hover{background:#e5e5e5;transform:translateY(-1px)}
+.auth-err{font-size:12px;color:#ff6b6b;min-height:20px;margin-bottom:8px}
+.hdr-auth{display:flex;align-items:center;gap:14px}
+.hdr-login{font-size:11px;font-weight:700;text-transform:uppercase;color:rgba(245,245,245,0.54);cursor:pointer;transition:color .3s;white-space:nowrap}
+.hdr-login:hover{color:var(--w)}
+.hdr-cabinet{display:inline-flex;align-items:center;padding:11px 20px;border:1px solid var(--line);font-size:11px;font-weight:700;text-transform:uppercase;color:var(--w);transition:all .3s;white-space:nowrap;text-decoration:none}
+.hdr-cabinet:hover{border-color:rgba(245,245,245,0.25);background:rgba(245,245,245,0.04)}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 </head>
 <body>
 
@@ -264,6 +288,10 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 <a href="#order">ЗАКАЗ</a>
 <a href="#faq">FAQ</a>
 </nav>
+<div class="hdr-auth" id="hdrAuth">
+<span class="hdr-login" id="hdrLoginBtn" onclick="openAuth()">ВОЙТИ</span>
+<a href="cabinet.html" class="hdr-cabinet" id="hdrCabinetBtn" style="display:none">КАБИНЕТ</a>
+</div>
 <a href="https://t.me/LOCKEDCN_bot" target="_blank" class="nav-cta">ЗАКАЗАТЬ</a>
 <div class="menu" onclick="document.getElementById('mm').classList.add('active')">
 <span></span><span></span><span></span>
@@ -278,6 +306,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 <a href="#order" onclick="this.parentElement.classList.remove('active')">ЗАКАЗ</a>
 <a href="#faq" onclick="this.parentElement.classList.remove('active')">FAQ</a>
 <a href="https://t.me/LOCKEDCN_bot" target="_blank" onclick="this.parentElement.classList.remove('active')">ЗАКАЗАТЬ В TELEGRAM</a>
+<span id="mmLoginBtn" style="cursor:pointer" onclick="document.getElementById('mm').classList.remove('active');openAuth()">ВОЙТИ</span>
+<a href="cabinet.html" id="mmCabinetBtn" style="display:none">МОЙ КАБИНЕТ</a>
 </div>
 
 <section class="hero">
@@ -552,6 +582,36 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 </footer>
 
 
+<div class="auth-overlay" id="authOverlay" onclick="if(event.target===this)closeAuth()">
+<div class="auth-box">
+<span class="auth-close" onclick="closeAuth()">&times;</span>
+<div class="auth-tabs">
+<div class="auth-tab on" onclick="switchAuthTab('login',this)">ВОЙТИ</div>
+<div class="auth-tab" onclick="switchAuthTab('register',this)">РЕГИСТРАЦИЯ</div>
+</div>
+<div class="auth-panel on" id="loginPanel">
+<div class="auth-err" id="loginErr"></div>
+<label class="auth-flabel">Email</label>
+<input class="auth-input" type="email" id="loginEmail" placeholder="your@email.com" autocomplete="email">
+<label class="auth-flabel">Пароль</label>
+<input class="auth-input" type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password">
+<button class="auth-btn" onclick="doLogin()">ВОЙТИ</button>
+</div>
+<div class="auth-panel" id="registerPanel">
+<div class="auth-err" id="regErr"></div>
+<label class="auth-flabel">Имя</label>
+<input class="auth-input" type="text" id="regName" placeholder="Ваше имя" autocomplete="name">
+<label class="auth-flabel">Email</label>
+<input class="auth-input" type="email" id="regEmail" placeholder="your@email.com" autocomplete="email">
+<label class="auth-flabel">Telegram</label>
+<input class="auth-input" type="text" id="regTg" placeholder="@username">
+<label class="auth-flabel">Пароль</label>
+<input class="auth-input" type="password" id="regPass" placeholder="Минимум 6 символов" autocomplete="new-password">
+<button class="auth-btn" onclick="doRegister()">ЗАРЕГИСТРИРОВАТЬСЯ</button>
+</div>
+</div>
+</div>
+
 <div class="modal" id="modal" onclick="closeModal()">
 <span class="modal-close" onclick="event.stopPropagation();closeModal()">×</span>
 <img src="" alt="" id="modalImg">
@@ -585,6 +645,71 @@ document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('on'));
 if(!was)item.classList.add('on');
 }
 
+// SUPABASE — замените на данные вашего проекта на supabase.com
+const SUPABASE_URL='https://dlbygehjlspqevtkidwg.supabase.co';
+const SUPABASE_ANON_KEY='sb_publishable_SqF4vd9mguowKuSwwaE7Uw_Jn0LbeIC';
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+
+function updateAuthUI(session){
+  const in_=!!session;
+  document.getElementById('hdrLoginBtn').style.display=in_?'none':'';
+  document.getElementById('hdrCabinetBtn').style.display=in_?'inline-flex':'none';
+  document.getElementById('mmLoginBtn').style.display=in_?'none':'';
+  document.getElementById('mmCabinetBtn').style.display=in_?'':'none';
+}
+sb.auth.getSession().then(({data:{session}})=>updateAuthUI(session));
+sb.auth.onAuthStateChange((_,session)=>updateAuthUI(session));
+
+function openAuth(){document.getElementById('authOverlay').classList.add('on')}
+function closeAuth(){
+  document.getElementById('authOverlay').classList.remove('on');
+  document.getElementById('loginErr').textContent='';
+  document.getElementById('regErr').textContent='';
+}
+function switchAuthTab(tab,el){
+  document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('loginPanel').classList.toggle('on',tab==='login');
+  document.getElementById('registerPanel').classList.toggle('on',tab==='register');
+}
+async function doLogin(){
+  const email=document.getElementById('loginEmail').value;
+  const pass=document.getElementById('loginPass').value;
+  const err=document.getElementById('loginErr');
+  err.textContent='';
+  const {error}=await sb.auth.signInWithPassword({email,password:pass});
+  if(error){err.textContent='Неверный email или пароль';return}
+  closeAuth();
+}
+async function doRegister(){
+  const name=document.getElementById('regName').value.trim();
+  const email=document.getElementById('regEmail').value.trim();
+  const tg=document.getElementById('regTg').value.trim();
+  const pass=document.getElementById('regPass').value;
+  const err=document.getElementById('regErr');
+  err.textContent='';
+  if(!name||!email||!pass){err.textContent='Заполните все поля';return}
+  if(pass.length<6){err.textContent='Пароль минимум 6 символов';return}
+  const {data,error}=await sb.auth.signUp({email,password:pass,options:{data:{full_name:name,telegram:tg}}});
+  if(error){err.textContent=error.message;return}
+  if(data.user){
+    await sb.from('profiles').upsert({id:data.user.id,full_name:name,telegram:tg});
+  }
+  closeAuth();
+  alert('Регистрация успешна! Проверьте email для подтверждения.');
+}
+
+async function saveOrderToSupabase(order){
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session)return;
+  await sb.from('orders').insert({
+    user_id:session.user.id,
+    link:order.link,name:order.name||null,size:order.size||null,
+    color:order.color||null,qty:parseInt(order.qty)||1,
+    telegram:order.tg,comment:order.comment||null,status:'new'
+  });
+}
+
 async function sendOrder(e){
 e.preventDefault();
 const link=document.getElementById('link').value;
@@ -611,6 +736,7 @@ try{
   });
   const data=await r.json();
   if(data.ok){
+    await saveOrderToSupabase({link,name,size,color,qty,tg,comment});
     document.getElementById('orderForm').style.display='none';
     document.getElementById('success').classList.add('on');
   } else {
@@ -619,6 +745,7 @@ try{
 } catch(err){
   const msg=encodeURIComponent(text);
   window.open(`https://t.me/lockedcn?text=${msg}`,'_blank');
+  await saveOrderToSupabase({link,name,size,color,qty,tg,comment});
   document.getElementById('orderForm').style.display='none';
   document.getElementById('success').classList.add('on');
 } finally {
