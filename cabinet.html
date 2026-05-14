@@ -313,8 +313,12 @@ async function sendMessage(){
   const content=input.value.trim();
   if(!content)return;
   input.value='';
+  appendMessage({content,from_admin:false,created_at:new Date().toISOString()},true);
   const {error}=await sb.from('messages').insert({user_id:currentUser.id,content,from_admin:false});
-  if(error)console.error(error);
+  if(error){
+    alert('Ошибка: '+error.message);
+    console.error(error);
+  }
 }
 
 document.addEventListener('DOMContentLoaded',()=>{
