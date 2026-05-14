@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Админ-панель — LOCKEDCN</title>
+<meta name="theme-color" content="#0a0a0a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#0a0a0a;--bg2:#111111;--bg3:#161616;--bg4:#1e1e1e;
+--w:#f5f5f5;--g:#8a8a8a;
+--line:rgba(245,245,245,0.08);--soft:rgba(245,245,245,0.04);
+--accent:#c8b98a;--signal:#5fd3c3;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter Tight',sans-serif;background:var(--bg);color:var(--w);overflow-x:hidden;-webkit-font-smoothing:antialiased;min-height:100vh}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+::selection{background:rgba(245,245,245,0.1)}
+::-webkit-scrollbar{width:2px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:rgba(245,245,245,0.1)}
+
+/* HEADER */
+.header{position:fixed;top:0;left:0;right:0;z-index:100;padding:22px 48px;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(180deg,rgba(10,10,10,0.95),rgba(10,10,10,0.8));backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
+.logo{font-size:15px;font-weight:900}
+.logo span{opacity:0.35}
+.admin-badge{font-size:9px;font-weight:900;letter-spacing:1px;text-transform:uppercase;background:rgba(200,185,138,0.15);border:1px solid rgba(200,185,138,0.3);color:var(--accent);padding:4px 10px}
+.header-left{display:flex;align-items:center;gap:16px}
+.header-right{display:flex;align-items:center;gap:20px}
+.hdr-back{font-size:11px;font-weight:700;text-transform:uppercase;color:rgba(245,245,245,0.54);transition:color .3s}
+.hdr-back:hover{color:var(--w)}
+.hdr-logout{font-size:11px;font-weight:700;text-transform:uppercase;color:rgba(245,245,245,0.35);cursor:pointer;transition:color .3s}
+.hdr-logout:hover{color:var(--w)}
+
+/* LAYOUT */
+.admin-wrap{display:grid;grid-template-columns:220px 1fr;min-height:100vh;padding-top:80px}
+
+/* SIDEBAR */
+.admin-side{position:sticky;top:80px;height:calc(100vh - 80px);background:var(--bg2);border-right:1px solid var(--line);padding:32px 0;display:flex;flex-direction:column}
+.side-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:rgba(245,245,245,0.25);padding:0 24px;margin-bottom:12px}
+.cab-nav{display:flex;flex-direction:column;gap:2px;flex:1}
+.cab-nav-item{padding:14px 24px;font-size:11px;font-weight:800;text-transform:uppercase;color:rgba(245,245,245,0.42);cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:space-between;border-left:2px solid transparent}
+.cab-nav-item:hover{color:var(--w);background:rgba(245,245,245,0.03)}
+.cab-nav-item.on{color:var(--w);border-left-color:var(--accent);background:rgba(245,245,245,0.04)}
+.cab-count{background:var(--accent);color:#0a0a0a;font-size:10px;font-weight:900;padding:2px 7px;min-width:20px;text-align:center}
+
+/* MAIN */
+.admin-main{padding:48px 56px;background:var(--bg)}
+.cab-panel{display:none}
+.cab-panel.on{display:block}
+.cab-panel-title{font-size:28px;font-weight:900;margin-bottom:36px}
+.cab-loader{display:flex;align-items:center;justify-content:center;height:200px;font-size:12px;color:var(--g)}
+
+/* ORDERS TABLE */
+.orders-table-wrap{overflow-x:auto}
+.orders-table{width:100%;border-collapse:collapse}
+.orders-table th{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:rgba(245,245,245,0.35);padding:12px 16px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+.orders-table td{padding:16px;font-size:13px;color:rgba(245,245,245,0.8);border-bottom:1px solid rgba(245,245,245,0.04);vertical-align:top}
+.orders-table tr:hover td{background:rgba(245,245,245,0.02)}
+.order-link{color:var(--signal);word-break:break-all;max-width:220px;display:block;font-size:12px}
+.order-user-name{font-weight:700;font-size:13px;margin-bottom:3px}
+.order-user-sub{font-size:11px;color:var(--g)}
+.status-select{background:var(--bg3);border:1px solid var(--line);color:var(--w);font-size:10px;font-weight:800;text-transform:uppercase;padding:7px 10px;font-family:inherit;cursor:pointer;outline:none;transition:border .3s}
+.status-select:hover,.status-select:focus{border-color:rgba(245,245,245,0.25)}
+.orders-empty-msg{font-size:14px;color:var(--g);padding:60px 0;text-align:center}
+
+/* CHAT */
+.admin-chat-wrap{display:grid;grid-template-columns:280px 1fr;height:calc(100vh - 240px);min-height:500px;border:1px solid var(--line)}
+.chat-users-col{border-right:1px solid var(--line);overflow-y:auto;background:var(--bg2);display:flex;flex-direction:column}
+.chat-users-col::-webkit-scrollbar{width:2px}
+.chat-user-item{padding:16px 20px;cursor:pointer;border-bottom:1px solid rgba(245,245,245,0.04);transition:background .2s;border-left:2px solid transparent}
+.chat-user-item:hover{background:rgba(245,245,245,0.04)}
+.chat-user-item.on{background:rgba(245,245,245,0.05);border-left-color:var(--accent)}
+.chat-user-name{font-size:13px;font-weight:700;margin-bottom:4px}
+.chat-user-preview{font-size:11px;color:var(--g);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px}
+.chat-user-time{font-size:10px;color:rgba(245,245,245,0.28);margin-top:4px}
+.chat-conv-col{display:flex;flex-direction:column;background:var(--bg);overflow:hidden}
+.chat-conv-header{padding:16px 24px;border-bottom:1px solid var(--line);font-size:13px;font-weight:700;background:var(--bg2);flex-shrink:0}
+.chat-messages{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:14px}
+.chat-messages::-webkit-scrollbar{width:2px}
+.chat-messages::-webkit-scrollbar-thumb{background:rgba(245,245,245,0.08)}
+.chat-msg{display:flex;flex-direction:column;max-width:70%}
+.from-user{align-self:flex-start;align-items:flex-start}
+.from-admin{align-self:flex-end;align-items:flex-end}
+.chat-bubble{padding:12px 16px;font-size:14px;line-height:1.5}
+.from-user .chat-bubble{background:rgba(245,245,245,0.06);border:1px solid var(--line)}
+.from-admin .chat-bubble{background:rgba(200,185,138,0.12);border:1px solid rgba(200,185,138,0.25)}
+.chat-time{font-size:10px;color:var(--g);margin-top:4px}
+.chat-compose{display:flex;border-top:1px solid var(--line);flex-shrink:0}
+.chat-input{flex:1;padding:18px 20px;background:transparent;border:none;color:var(--w);font-size:14px;font-family:inherit;outline:none}
+.chat-input::placeholder{color:rgba(245,245,245,0.25)}
+.chat-send{padding:18px 28px;background:var(--w);color:#0a0a0a;font-size:11px;font-weight:900;text-transform:uppercase;cursor:pointer;border:none;font-family:inherit;transition:background .3s;flex-shrink:0}
+.chat-send:hover{background:#e5e5e5}
+.chat-placeholder{flex:1;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--g);flex-direction:column;gap:10px}
+.chat-placeholder-icon{font-size:36px;opacity:.12}
+.chat-empty{text-align:center;font-size:13px;color:var(--g);padding:40px 20px}
+.no-msgs{flex:1;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--g)}
+
+@media(max-width:1100px){
+.admin-chat-wrap{grid-template-columns:1fr;height:auto}
+.chat-users-col{max-height:220px;border-right:none;border-bottom:1px solid var(--line)}
+.chat-conv-col{min-height:400px}
+}
+@media(max-width:768px){
+.header{padding:20px 24px}
+.admin-wrap{grid-template-columns:1fr;padding-top:70px}
+.admin-side{position:static;height:auto}
+.cab-nav{flex-direction:row}
+.cab-nav-item{border-left:none;border-bottom:2px solid transparent}
+.cab-nav-item.on{border-left-color:transparent;border-bottom-color:var(--accent)}
+.admin-main{padding:28px 20px}
+.orders-table th:nth-child(4),.orders-table td:nth-child(4){display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+<div class="header-left">
+<a href="index.html" class="logo">LOCKED<span>CN</span></a>
+<span class="admin-badge">ADMIN</span>
+</div>
+<div class="header-right">
+<a href="cabinet.html" class="hdr-back">МОЙ КАБИНЕТ</a>
+<a href="index.html" class="hdr-back">← САЙТ</a>
+<span class="hdr-logout" onclick="doLogout()">ВЫЙТИ</span>
+</div>
+</header>
+
+<div class="admin-wrap">
+<aside class="admin-side">
+<div class="side-label" style="margin-top:4px">УПРАВЛЕНИЕ</div>
+<nav class="cab-nav">
+<div class="cab-nav-item on" onclick="showTab('orders',this)">
+<span>ЗАКАЗЫ</span>
+<span class="cab-count" id="ordersCount">—</span>
+</div>
+<div class="cab-nav-item" onclick="showTab('chat',this)">
+<span>ЧАТ</span>
+<span class="cab-count" id="chatCount">—</span>
+</div>
+</nav>
+</aside>
+
+<main class="admin-main">
+
+<div class="cab-panel on" id="tab-orders">
+<div class="cab-panel-title">ВСЕ ЗАКАЗЫ</div>
+<div class="cab-loader" id="ordersLoader">Загрузка...</div>
+<div class="orders-empty-msg" id="ordersEmpty" style="display:none">Заказов пока нет</div>
+<div class="orders-table-wrap" id="ordersTableWrap" style="display:none">
+<table class="orders-table">
+<thead>
+<tr>
+<th>ДАТА</th>
+<th>КЛИЕНТ</th>
+<th>ССЫЛКА / ТОВАР</th>
+<th>ДЕТАЛИ</th>
+<th>СТАТУС</th>
+</tr>
+</thead>
+<tbody id="ordersBody"></tbody>
+</table>
+</div>
+</div>
+
+<div class="cab-panel" id="tab-chat">
+<div class="cab-panel-title">ЧАТ С КЛИЕНТАМИ</div>
+<div class="admin-chat-wrap">
+<div class="chat-users-col" id="chatUsersList">
+<div class="chat-empty" id="chatUsersEmpty">Сообщений пока нет</div>
+</div>
+<div class="chat-conv-col" id="chatConvCol">
+<div class="chat-placeholder">
+<div class="chat-placeholder-icon">💬</div>
+<span>Выберите клиента слева</span>
+</div>
+</div>
+</div>
+</div>
+
+</main>
+</div>
+
+<script>
+const SUPABASE_URL='https://dlbygehjlspqevtkidwg.supabase.co';
+const SUPABASE_ANON_KEY='sb_publishable_SqF4vd9mguowKuSwwaE7Uw_Jn0LbeIC';
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+
+let adminUser=null;
+let selectedUserId=null;
+let profilesCache={};
+
+// ─── AUTH CHECK ──────────────────────────────────────────────────────────────
+sb.auth.getSession().then(async({data:{session}})=>{
+  if(!session){window.location.href='index.html';return}
+  const {data:profile}=await sb.from('profiles').select('is_admin').eq('id',session.user.id).single();
+  if(!profile?.is_admin){window.location.href='index.html';return}
+  adminUser=session.user;
+  loadOrders();
+  loadChatUsers();
+  subscribeMessages();
+});
+
+// ─── ORDERS ──────────────────────────────────────────────────────────────────
+async function loadOrders(){
+  const {data:orders,error}=await sb.from('orders').select('*').order('created_at',{ascending:false});
+  document.getElementById('ordersLoader').style.display='none';
+  if(error||!orders||orders.length===0){
+    document.getElementById('ordersEmpty').style.display='block';
+    document.getElementById('ordersCount').textContent='0';
+    return;
+  }
+  document.getElementById('ordersCount').textContent=orders.length;
+  document.getElementById('ordersTableWrap').style.display='block';
+
+  // Load profiles for all unique user IDs
+  const userIds=[...new Set(orders.filter(o=>o.user_id).map(o=>o.user_id))];
+  if(userIds.length>0){
+    const {data:profiles}=await sb.from('profiles').select('id,full_name,email').in('id',userIds);
+    if(profiles)profiles.forEach(p=>{profilesCache[p.id]=p});
+  }
+
+  document.getElementById('ordersBody').innerHTML=orders.map(o=>{
+    const p=profilesCache[o.user_id]||{};
+    return`<tr>
+      <td style="white-space:nowrap;font-size:12px">${fmtDate(o.created_at)}</td>
+      <td>
+        <div class="order-user-name">${esc(p.full_name||o.name||'—')}</div>
+        ${p.email?`<div class="order-user-sub">${esc(p.email)}</div>`:''}
+        ${o.telegram?`<div class="order-user-sub">TG: ${esc(o.telegram)}</div>`:''}
+      </td>
+      <td>
+        ${o.link?`<a href="${esc(o.link)}" target="_blank" class="order-link">${esc(o.link)}</a>`:'—'}
+        ${o.comment?`<div style="font-size:11px;color:var(--g);margin-top:6px;font-style:italic">${esc(o.comment)}</div>`:''}
+      </td>
+      <td style="font-size:12px;color:var(--g);line-height:1.8">
+        ${o.size?`Размер: ${esc(o.size)}<br>`:''}
+        ${o.color?`Цвет: ${esc(o.color)}<br>`:''}
+        ${o.qty?`Кол-во: ${o.qty}`:''}
+      </td>
+      <td>
+        <select class="status-select" onchange="updateStatus('${o.id}',this.value)">
+          <option value="new"${o.status==='new'?' selected':''}>НОВЫЙ</option>
+          <option value="processing"${o.status==='processing'?' selected':''}>В РАБОТЕ</option>
+          <option value="paid"${o.status==='paid'?' selected':''}>ОПЛАЧЕН</option>
+          <option value="delivered"${o.status==='delivered'?' selected':''}>ДОСТАВЛЕН</option>
+        </select>
+      </td>
+    </tr>`
+  }).join('');
+}
+
+async function updateStatus(id,status){
+  await sb.from('orders').update({status}).eq('id',id);
+}
+
+// ─── CHAT ─────────────────────────────────────────────────────────────────────
+async function loadChatUsers(){
+  const {data:msgs}=await sb.from('messages').select('user_id,content,created_at,from_admin').order('created_at',{ascending:false});
+  if(!msgs||msgs.length===0){return}
+
+  // Group by user_id, keep last message per user
+  const seen=new Set();
+  const users=[];
+  for(const m of msgs){
+    if(!seen.has(m.user_id)){seen.add(m.user_id);users.push(m)}
+  }
+
+  // Load profiles
+  const userIds=users.map(u=>u.user_id);
+  const {data:profiles}=await sb.from('profiles').select('id,full_name,email').in('id',userIds);
+  if(profiles)profiles.forEach(p=>{profilesCache[p.id]=p});
+
+  document.getElementById('chatCount').textContent=users.length;
+  document.getElementById('chatUsersEmpty').style.display='none';
+  const list=document.getElementById('chatUsersList');
+  list.innerHTML=users.map(u=>`
+    <div class="chat-user-item${u.user_id===selectedUserId?' on':''}" id="ui-${u.user_id}" onclick="openConversation('${u.user_id}')">
+      <div class="chat-user-name">${esc(profilesCache[u.user_id]?.full_name||profilesCache[u.user_id]?.email||'Пользователь')}</div>
+      <div class="chat-user-preview">${u.from_admin?'Вы: ':''}${esc(u.content)}</div>
+      <div class="chat-user-time">${fmtTime(u.created_at)}</div>
+    </div>
+  `).join('');
+}
+
+async function openConversation(userId){
+  selectedUserId=userId;
+  document.querySelectorAll('.chat-user-item').forEach(el=>el.classList.toggle('on',el.id===`ui-${userId}`));
+
+  const uname=profilesCache[userId]?.full_name||profilesCache[userId]?.email||'Пользователь';
+  const {data:msgs}=await sb.from('messages').select('*').eq('user_id',userId).order('created_at',{ascending:true});
+
+  const conv=document.getElementById('chatConvCol');
+  conv.innerHTML=`
+    <div class="chat-conv-header">${esc(uname)}</div>
+    <div class="chat-messages" id="convMsgs">
+      ${msgs&&msgs.length
+        ?msgs.map(m=>`<div class="chat-msg ${m.from_admin?'from-admin':'from-user'}">
+          <div class="chat-bubble">${esc(m.content)}</div>
+          <div class="chat-time">${fmtTime(m.created_at)}</div>
+        </div>`).join('')
+        :'<div class="no-msgs">Нет сообщений</div>'}
+    </div>
+    <div class="chat-compose">
+      <input class="chat-input" id="adminInput" placeholder="Ответить клиенту..." type="text">
+      <button class="chat-send" onclick="sendReply()">ОТПРАВИТЬ</button>
+    </div>
+  `;
+
+  const el=document.getElementById('convMsgs');
+  if(el)el.scrollTop=el.scrollHeight;
+  document.getElementById('adminInput')?.addEventListener('keydown',e=>{
+    if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendReply()}
+  });
+}
+
+async function sendReply(){
+  if(!selectedUserId)return;
+  const input=document.getElementById('adminInput');
+  const content=input.value.trim();
+  if(!content)return;
+  input.value='';
+  await sb.from('messages').insert({user_id:selectedUserId,content,from_admin:true});
+}
+
+function subscribeMessages(){
+  sb.channel('admin-messages')
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages'},payload=>{
+      const msg=payload.new;
+      // Append to open conversation
+      if(msg.user_id===selectedUserId){
+        const c=document.getElementById('convMsgs');
+        if(c){
+          c.querySelector('.no-msgs')?.remove();
+          const div=document.createElement('div');
+          div.className=`chat-msg ${msg.from_admin?'from-admin':'from-user'}`;
+          div.innerHTML=`<div class="chat-bubble">${esc(msg.content)}</div><div class="chat-time">${fmtTime(msg.created_at)}</div>`;
+          c.appendChild(div);
+          c.scrollTop=c.scrollHeight;
+        }
+      }
+      // Refresh user list to show new preview
+      loadChatUsers();
+    })
+    .subscribe();
+}
+
+// ─── TABS ─────────────────────────────────────────────────────────────────────
+function showTab(name,el){
+  document.querySelectorAll('.cab-nav-item').forEach(i=>i.classList.remove('on'));
+  el.classList.add('on');
+  document.querySelectorAll('.cab-panel').forEach(p=>p.classList.remove('on'));
+  document.getElementById('tab-'+name).classList.add('on');
+}
+
+// ─── LOGOUT ───────────────────────────────────────────────────────────────────
+async function doLogout(){
+  await sb.auth.signOut();
+  window.location.href='index.html';
+}
+
+// ─── UTILS ────────────────────────────────────────────────────────────────────
+function esc(s){
+  if(!s)return'';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function fmtDate(d){
+  return new Date(d).toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
+}
+function fmtTime(d){
+  const date=new Date(d),now=new Date();
+  if(date.toDateString()===now.toDateString())
+    return date.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+  return date.toLocaleDateString('ru-RU',{day:'numeric',month:'short'});
+}
+</script>
+</body>
+</html>
