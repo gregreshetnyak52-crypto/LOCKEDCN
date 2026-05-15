@@ -628,6 +628,24 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 <label class="auth-flabel">Пароль</label>
 <input class="auth-input" type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password">
 <button class="auth-btn" onclick="doLogin()">ВОЙТИ</button>
+<div style="text-align:center;margin-top:14px"><span onclick="showForgot()" style="font-size:12px;color:var(--g);cursor:pointer;text-decoration:underline;text-underline-offset:3px">Забыли пароль?</span></div>
+</div>
+<div class="auth-panel" id="forgotPanel">
+<p style="font-size:13px;color:var(--g);margin:0 0 20px;line-height:1.6">Введите email — отправим ссылку для сброса пароля.</p>
+<div class="auth-err" id="forgotErr"></div>
+<label class="auth-flabel">Email</label>
+<input class="auth-input" type="email" id="forgotEmail" placeholder="your@email.com" autocomplete="email">
+<button class="auth-btn" onclick="doForgotPassword()">ОТПРАВИТЬ ССЫЛКУ</button>
+<div style="text-align:center;margin-top:14px"><span onclick="showLogin()" style="font-size:12px;color:var(--g);cursor:pointer">← Вернуться к входу</span></div>
+</div>
+<div class="auth-panel" id="resetPanel">
+<p style="font-size:13px;color:var(--g);margin:0 0 20px;line-height:1.6">Введите новый пароль.</p>
+<div class="auth-err" id="resetErr"></div>
+<label class="auth-flabel">Новый пароль</label>
+<input class="auth-input" type="password" id="resetPass" placeholder="Минимум 6 символов">
+<label class="auth-flabel">Повторите пароль</label>
+<input class="auth-input" type="password" id="resetPass2" placeholder="Повторите пароль">
+<button class="auth-btn" onclick="doResetPassword()">СОХРАНИТЬ ПАРОЛЬ</button>
 </div>
 <div class="auth-panel" id="registerPanel">
 <div class="auth-err" id="regErr"></div>
@@ -692,7 +710,17 @@ function updateAuthUI(session){
   document.getElementById('mmCabinetBtn').style.display=in_?'':'none';
 }
 sb.auth.getSession().then(({data:{session}})=>updateAuthUI(session));
-sb.auth.onAuthStateChange((_,session)=>updateAuthUI(session));
+sb.auth.onAuthStateChange((event,session)=>{
+  if(event==='PASSWORD_RECOVERY'){
+    document.getElementById('authOverlay').classList.add('on');
+    ['loginPanel','registerPanel','forgotPanel'].forEach(id=>document.getElementById(id).classList.remove('on'));
+    document.getElementById('resetPanel').classList.add('on');
+    document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('on'));
+    document.querySelectorAll('.auth-tab')[0].classList.add('on');
+    return;
+  }
+  updateAuthUI(session);
+});
 
 function openAuth(tab){
   document.getElementById('authOverlay').classList.add('on');
@@ -712,14 +740,48 @@ function openAuth(tab){
 }
 function closeAuth(){
   document.getElementById('authOverlay').classList.remove('on');
-  document.getElementById('loginErr').textContent='';
-  document.getElementById('regErr').textContent='';
+  ['loginErr','regErr','forgotErr','resetErr'].forEach(id=>document.getElementById(id).textContent='');
 }
 function switchAuthTab(tab,el){
   document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('on'));
   el.classList.add('on');
   document.getElementById('loginPanel').classList.toggle('on',tab==='login');
   document.getElementById('registerPanel').classList.toggle('on',tab==='register');
+  document.getElementById('forgotPanel').classList.remove('on');
+  document.getElementById('resetPanel').classList.remove('on');
+}
+function showForgot(){
+  document.getElementById('loginPanel').classList.remove('on');
+  document.getElementById('forgotPanel').classList.add('on');
+  document.getElementById('forgotEmail').value=document.getElementById('loginEmail').value;
+}
+function showLogin(){
+  document.getElementById('forgotPanel').classList.remove('on');
+  document.getElementById('resetPanel').classList.remove('on');
+  document.getElementById('loginPanel').classList.add('on');
+}
+async function doForgotPassword(){
+  const email=document.getElementById('forgotEmail').value.trim();
+  const err=document.getElementById('forgotErr');
+  err.textContent='';
+  if(!email){err.textContent='Введите email';return}
+  const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:'https://www.lockedcn.ru/'});
+  if(error){err.textContent='Ошибка: '+error.message;return}
+  closeAuth();
+  alert('Ссылка для сброса пароля отправлена на '+email);
+}
+async function doResetPassword(){
+  const pass=document.getElementById('resetPass').value;
+  const pass2=document.getElementById('resetPass2').value;
+  const err=document.getElementById('resetErr');
+  err.textContent='';
+  if(pass.length<6){err.textContent='Пароль минимум 6 символов';return}
+  if(pass!==pass2){err.textContent='Пароли не совпадают';return}
+  const {error}=await sb.auth.updateUser({password:pass});
+  if(error){err.textContent='Ошибка: '+error.message;return}
+  closeAuth();
+  window.location.hash='';
+  alert('Пароль успешно изменён!');
 }
 async function doLogin(){
   const email=document.getElementById('loginEmail').value;
