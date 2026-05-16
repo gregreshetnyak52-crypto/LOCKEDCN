@@ -281,8 +281,15 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 .hdr-register:hover{border-color:rgba(245,245,245,0.6);background:rgba(245,245,245,0.06)}
 .hdr-cabinet{display:inline-flex;align-items:center;padding:11px 20px;border:1px solid var(--line);font-size:11px;font-weight:700;text-transform:uppercase;color:var(--w);transition:all .3s;white-space:nowrap;text-decoration:none}
 .hdr-cabinet:hover{border-color:rgba(245,245,245,0.25);background:rgba(245,245,245,0.04)}
+/* CONSENT */
+.consent-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:16px;cursor:pointer}
+.consent-row input[type=checkbox]{width:16px;height:16px;margin-top:2px;accent-color:var(--signal);flex-shrink:0;cursor:pointer}
+.consent-row span{font-size:13px;color:rgba(245,245,245,0.58);line-height:1.55}
+.consent-row a{color:var(--signal);text-decoration:underline;text-underline-offset:3px}
+.consent-row a:hover{color:#fff}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <!-- Yandex.Metrika counter -->
 <script type="text/javascript">
     (function(m,e,t,r,i,k,a){
@@ -494,8 +501,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 <section class="order" id="order">
 <div class="order-grid">
 <div class="order-info r">
-<div class="order-label">ЗАПРОС ЗАКАЗА</div>
-<h2 class="order-title">ОТПРАВИТЬ<br>ЗАПРОС</h2>
+<div class="order-label">ОФОРМИТЬ ЗАКАЗ</div>
+<h2 class="order-title">ОФОРМИТЬ<br>ЗАКАЗ</h2>
 <p class="order-desc">Отправьте ссылку на товар и мы найдём его для вас. Полный контроль качества и доставка по всему миру.</p>
 <div class="order-benefits">
 <div class="ob">Только оригинальные товары</div>
@@ -544,10 +551,14 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 Прикрепить скриншот
 </label>
 <input type="file" id="file" accept="image/*" style="display:none">
-<button type="submit" class="fs">ОТПРАВИТЬ ЗАПРОС</button>
+<label class="consent-row">
+<input type="checkbox" id="orderConsent" required>
+<span>Я соглашаюсь с <a href="privacy.html" target="_blank">Политикой конфиденциальности</a> и даю согласие на обработку моих персональных данных</span>
+</label>
+<button type="submit" class="fs">ОФОРМИТЬ ЗАКАЗ</button>
 </form>
 <div class="fsuc" id="success">
-<h3>Запрос отправлен</h3>
+<h3>Заказ оформлен</h3>
 <p>Менеджер свяжется с вами в Telegram</p>
 </div>
 </div>
@@ -605,6 +616,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 <a href="https://www.tiktok.com/@locked.cn3" target="_blank">TikTok</a>
 <a href="mailto:lockedcn@contact-cn.ru">Email</a>
 <a href="tel:+79939043421">+7 (993) 904-34-21</a>
+<a href="privacy.html">Политика конфиденциальности</a>
 </div>
 </div>
 <div class="footer-bottom">
@@ -657,8 +669,20 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 <input class="auth-input" type="text" id="regTg" placeholder="@username">
 <label class="auth-flabel">Пароль</label>
 <input class="auth-input" type="password" id="regPass" placeholder="Минимум 6 символов" autocomplete="new-password">
+<label class="consent-row" style="margin-top:6px">
+<input type="checkbox" id="regConsent">
+<span>Я соглашаюсь с <a href="privacy.html" target="_blank">Политикой конфиденциальности</a> и даю согласие на обработку персональных данных</span>
+</label>
 <button class="auth-btn" onclick="doRegister()">ЗАРЕГИСТРИРОВАТЬСЯ</button>
 </div>
+</div>
+</div>
+
+<div id="cookieBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:400;background:var(--bg2);border-top:1px solid var(--line);padding:18px 48px;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+<p style="font-size:13px;color:rgba(245,245,245,0.65);line-height:1.55;max-width:680px">Мы используем cookies и Яндекс.Метрику для аналитики сайта. Продолжая пользоваться сайтом, вы соглашаетесь с нашей <a href="privacy.html" style="color:var(--signal);text-decoration:underline;text-underline-offset:3px">Политикой конфиденциальности</a>.</p>
+<div style="display:flex;gap:10px;flex-shrink:0;align-items:center">
+<button onclick="acceptCookies()" style="padding:11px 24px;background:var(--w);color:#0a0a0a;font-size:11px;font-weight:900;text-transform:uppercase;border:none;cursor:pointer;font-family:inherit;transition:all .3s">ПРИНЯТЬ</button>
+<a href="privacy.html" style="padding:11px 20px;border:1px solid var(--line);font-size:11px;font-weight:700;text-transform:uppercase;color:rgba(245,245,245,0.55);white-space:nowrap">ПОДРОБНЕЕ</a>
 </div>
 </div>
 
@@ -699,6 +723,12 @@ if(!was)item.classList.add('on');
 const SUPABASE_URL='https://dlbygehjlspqevtkidwg.supabase.co';
 const SUPABASE_ANON_KEY='sb_publishable_SqF4vd9mguowKuSwwaE7Uw_Jn0LbeIC';
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+
+// EMAILJS — замените на ваши данные с emailjs.com
+const EMAILJS_PUBLIC_KEY='ВСТАВЬТЕ_PUBLIC_KEY';
+const EMAILJS_SERVICE_ID='ВСТАВЬТЕ_SERVICE_ID';
+const EMAILJS_TEMPLATE_ID='ВСТАВЬТЕ_TEMPLATE_ID';
+emailjs.init(EMAILJS_PUBLIC_KEY);
 
 function updateAuthUI(session){
   const in_=!!session;
@@ -799,6 +829,7 @@ async function doRegister(){
   const pass=document.getElementById('regPass').value;
   const err=document.getElementById('regErr');
   err.textContent='';
+  if(!document.getElementById('regConsent').checked){err.textContent='Необходимо согласие с Политикой конфиденциальности';return}
   if(!name||!email||!pass){err.textContent='Заполните все поля';return}
   if(pass.length<6){err.textContent='Пароль минимум 6 символов';return}
   const {data,error}=await sb.auth.signUp({email,password:pass,options:{data:{full_name:name,telegram:tg}}});
@@ -837,17 +868,24 @@ const btn=document.querySelector('.fs');
 btn.disabled=true;
 btn.textContent='ОТПРАВЛЯЕМ...';
 
-const text=`🛍 НОВЫЙ ЗАКАЗ\n\n🔗 Ссылка: ${link}\n📦 Название: ${name||'—'}\n📐 Размер: ${size||'—'}\n🎨 Цвет: ${color||'—'}\n🔢 Кол-во: ${qty}\n💬 Telegram: ${tg}\n📝 Комментарий: ${comment||'—'}`;
-
 try{
   await saveOrderToSupabase({link,name,size,color,qty,tg,comment});
+  emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+    order_link: link,
+    order_name: name||'—',
+    order_size: size||'—',
+    order_color: color||'—',
+    order_qty: qty,
+    order_tg: tg,
+    order_comment: comment||'—'
+  });
   document.getElementById('orderForm').style.display='none';
   document.getElementById('success').classList.add('on');
 } catch(err){
-  alert('Ошибка при отправке заявки. Попробуйте ещё раз.');
+  alert('Ошибка при отправке заказа. Попробуйте ещё раз.');
 } finally {
   btn.disabled=false;
-  btn.textContent='ОТПРАВИТЬ ЗАПРОС';
+  btn.textContent='ОФОРМИТЬ ЗАКАЗ';
 }
 }
 
@@ -863,6 +901,17 @@ document.getElementById('modal').classList.remove('on');
 document.body.style.overflow='';
 }
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+
+// Cookie banner
+(function(){
+  if(!localStorage.getItem('cookies_accepted')){
+    document.getElementById('cookieBanner').style.display='flex';
+  }
+})();
+function acceptCookies(){
+  localStorage.setItem('cookies_accepted','1');
+  document.getElementById('cookieBanner').style.display='none';
+}
 </script>
 </body>
 </html>
