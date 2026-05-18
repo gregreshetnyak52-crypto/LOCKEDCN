@@ -253,6 +253,7 @@ async function loadOrders(){
           <option value="processing"${o.status==='processing'?' selected':''}>В РАБОТЕ</option>
           <option value="paid"${o.status==='paid'?' selected':''}>ОПЛАЧЕН</option>
           <option value="delivered"${o.status==='delivered'?' selected':''}>ДОСТАВЛЕН</option>
+          <option value="cancelled"${o.status==='cancelled'?' selected':''}>ОТМЕНЁН</option>
         </select>
       </td>
     </tr>`
