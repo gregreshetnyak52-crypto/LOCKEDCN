@@ -202,10 +202,12 @@ let profilesCache={};
 
 // ─── AUTH CHECK ──────────────────────────────────────────────────────────────
 sb.auth.getSession().then(async({data:{session}})=>{
-  if(!session){window.location.href='index.html';return}
-  const {data:refreshed}=await sb.auth.refreshSession();
+  if(!session){alert('НЕТ СЕССИИ');window.location.href='index.html';return}
+  const {data:refreshed,error:rErr}=await sb.auth.refreshSession();
   const user=refreshed?.session?.user||session.user;
-  const isAdmin=user?.user_metadata?.is_admin===true;
+  const meta=user?.user_metadata;
+  alert('is_admin='+meta?.is_admin+' тип='+(typeof meta?.is_admin)+' rErr='+(rErr?.message||'нет'));
+  const isAdmin=meta?.is_admin===true;
   if(!isAdmin){window.location.href='index.html';return}
   adminUser=session.user;
   loadOrders();
