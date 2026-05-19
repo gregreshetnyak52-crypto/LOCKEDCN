@@ -88,10 +88,11 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 .gallery-title,.process-title,.reviews-title,.order-info .order-title,.faq-title{font-size:42px;font-weight:900;letter-spacing:0;line-height:1.06}
 .gallery-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:10px}
 .gc{overflow:hidden;cursor:pointer;background:var(--bg2);border:1px solid var(--line);display:flex;flex-direction:column}
-.gc:nth-child(1),.gc:nth-child(2),.gc:nth-child(3){grid-column:span 4}
+.gc:nth-child(1),.gc:nth-child(2),.gc:nth-child(3),.gc:nth-child(4),.gc:nth-child(5),.gc:nth-child(6){grid-column:span 4}
 .gc-photo{position:relative;overflow:hidden;min-height:520px;flex:1}
 .gc img{width:100%;height:100%;object-fit:cover;transition:transform 1.1s cubic-bezier(.25,.46,.45,.94),filter .5s}
 .gc:hover img{transform:scale(1.04);filter:saturate(1.05) contrast(1.04)}
+.gc video{width:100%;height:100%;object-fit:cover;pointer-events:none}
 .gc-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,10,10,0.06) 0%,rgba(10,10,10,0.14) 42%,rgba(10,10,10,0.82) 100%);opacity:1;transition:opacity .5s}
 .gc-info{position:absolute;bottom:28px;left:28px;right:28px;transform:translateY(10px);opacity:.92;transition:all .5s}
 .gc:hover .gc-info{transform:translateY(0);opacity:1}
@@ -420,6 +421,42 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 </div>
 <div class="gc-caption">ЗАКАЗ КЛИЕНТА</div>
 </div>
+<div class="gc r" onclick="openVideoModal('videos/IMG_3869.MP4')">
+<div class="gc-photo">
+<video autoplay muted loop playsinline>
+<source src="videos/IMG_3869.MP4" type="video/mp4">
+</video>
+<div class="gc-overlay"></div>
+<div class="gc-info">
+<div class="gc-brand" style="display:flex;align-items:center;gap:10px">▶ ВИДЕО</div>
+</div>
+</div>
+<div class="gc-caption">ЗАКАЗ КЛИЕНТА</div>
+</div>
+<div class="gc r d1" onclick="openVideoModal('videos/IMG_3870.MP4')">
+<div class="gc-photo">
+<video autoplay muted loop playsinline>
+<source src="videos/IMG_3870.MP4" type="video/mp4">
+</video>
+<div class="gc-overlay"></div>
+<div class="gc-info">
+<div class="gc-brand" style="display:flex;align-items:center;gap:10px">▶ ВИДЕО</div>
+</div>
+</div>
+<div class="gc-caption">ЗАКАЗ КЛИЕНТА</div>
+</div>
+<div class="gc r d2" onclick="openVideoModal('videos/IMG_3871.MP4')">
+<div class="gc-photo">
+<video autoplay muted loop playsinline>
+<source src="videos/IMG_3871.MP4" type="video/mp4">
+</video>
+<div class="gc-overlay"></div>
+<div class="gc-info">
+<div class="gc-brand" style="display:flex;align-items:center;gap:10px">▶ ВИДЕО</div>
+</div>
+</div>
+<div class="gc-caption">ЗАКАЗ КЛИЕНТА</div>
+</div>
 </div>
 </section>
 
@@ -548,9 +585,9 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 </div>
 <label class="fl-attach" for="file">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-Прикрепить скриншот
+<span id="fileLabel">Прикрепить скриншот</span>
 </label>
-<input type="file" id="file" accept="image/*" style="display:none">
+<input type="file" id="file" accept="image/*" style="display:none" onchange="document.getElementById('fileLabel').textContent=this.files[0]?this.files[0].name:'Прикрепить скриншот'">
 <label class="consent-row">
 <input type="checkbox" id="orderConsent" required>
 <span>Я соглашаюсь с <a href="privacy.html" target="_blank">Политикой конфиденциальности</a> и даю согласие на обработку моих персональных данных</span>
@@ -689,6 +726,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 <div class="modal" id="modal" onclick="closeModal()">
 <span class="modal-close" onclick="event.stopPropagation();closeModal()">×</span>
 <img src="" alt="" id="modalImg">
+<video id="modalVideo" controls style="display:none;max-width:88vw;max-height:88vh;outline:none;background:#000"></video>
 </div>
 
 <script>
@@ -848,7 +886,8 @@ async function saveOrderToSupabase(order){
     user_id:session.user.id,
     link:order.link,name:order.name||null,size:order.size||null,
     color:order.color||null,qty:parseInt(order.qty)||1,
-    telegram:order.tg,comment:order.comment||null,status:'new'
+    telegram:order.tg,comment:order.comment||null,
+    file_url:order.file_url||null,status:'new'
   });
 }
 
@@ -869,7 +908,18 @@ btn.disabled=true;
 btn.textContent='ОТПРАВЛЯЕМ...';
 
 try{
-  await saveOrderToSupabase({link,name,size,color,qty,tg,comment});
+  let file_url=null;
+  const fileInput=document.getElementById('file');
+  if(fileInput.files&&fileInput.files[0]){
+    const file=fileInput.files[0];
+    const fileName=`${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
+    const {error:uploadErr}=await sb.storage.from('order-files').upload(fileName,file,{contentType:file.type});
+    if(!uploadErr){
+      const {data:urlData}=sb.storage.from('order-files').getPublicUrl(fileName);
+      file_url=urlData.publicUrl;
+    }
+  }
+  await saveOrderToSupabase({link,name,size,color,qty,tg,comment,file_url});
   emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
     order_link: link,
     order_name: name||'—',
@@ -877,7 +927,8 @@ try{
     order_color: color||'—',
     order_qty: qty,
     order_tg: tg,
-    order_comment: comment||'—'
+    order_comment: comment||'—',
+    order_file: file_url||'—'
   });
   document.getElementById('orderForm').style.display='none';
   document.getElementById('success').classList.add('on');
@@ -893,10 +944,24 @@ function openModal(el){
 const img=el.querySelector('img');
 document.getElementById('modalImg').src=img.src;
 document.getElementById('modalImg').alt=img.alt;
+document.getElementById('modalImg').style.display='';
+document.getElementById('modalVideo').style.display='none';
 document.getElementById('modal').classList.add('on');
 document.body.style.overflow='hidden';
 }
+function openVideoModal(src){
+const v=document.getElementById('modalVideo');
+v.src=src;
+v.style.display='';
+document.getElementById('modalImg').style.display='none';
+document.getElementById('modal').classList.add('on');
+document.body.style.overflow='hidden';
+v.play();
+}
 function closeModal(){
+const v=document.getElementById('modalVideo');
+v.pause();v.src='';v.style.display='none';
+document.getElementById('modalImg').style.display='';
 document.getElementById('modal').classList.remove('on');
 document.body.style.overflow='';
 }

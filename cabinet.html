@@ -136,6 +136,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 <div class="header-right">
 <span class="hdr-user-name" id="hdrUserName"></span>
 <a href="index.html" class="hdr-back">← НА САЙТ</a>
+<a href="privacy.html" style="font-size:11px;font-weight:700;text-transform:uppercase;color:rgba(245,245,245,0.35);transition:color .3s" onmouseover="this.style.color='var(--w)'" onmouseout="this.style.color='rgba(245,245,245,0.35)'">КОНФИДЕНЦИАЛЬНОСТЬ</a>
 <span class="hdr-logout" onclick="doLogout()">ВЫЙТИ</span>
 </div>
 </header>
@@ -252,14 +253,14 @@ async function loadOrders(){
     <div class="order-card">
       <div class="order-card-head">
         <div class="order-card-date">${fmtDate(o.created_at)}</div>
-        <div class="order-status s-${o.status}">${statusLabel(o.status)}</div>
+        <div class="order-status s-${esc(o.status)}">${statusLabel(o.status)}</div>
       </div>
-      <div class="order-card-link"><a href="${esc(o.link)}" target="_blank" style="color:var(--signal)">${esc(o.link)}</a></div>
+      <div class="order-card-link"><a href="${/^https?:\/\//i.test(o.link)?esc(o.link):'#'}" target="_blank" style="color:var(--signal)">${esc(o.link)}</a></div>
       <div class="order-card-meta">
         ${o.name?`<span>${esc(o.name)}</span>`:''}
         ${o.size?`<span>Размер: ${esc(o.size)}</span>`:''}
         ${o.color?`<span>Цвет: ${esc(o.color)}</span>`:''}
-        ${o.qty?`<span>Кол-во: ${o.qty}</span>`:''}
+        ${o.qty?`<span>Кол-во: ${esc(String(o.qty))}</span>`:''}
         ${o.telegram?`<span>TG: ${esc(o.telegram)}</span>`:''}
       </div>
       ${o.comment?`<div class="order-card-comment">${esc(o.comment)}</div>`:''}
@@ -268,7 +269,7 @@ async function loadOrders(){
 }
 
 function statusLabel(s){
-  return{new:'НОВЫЙ',processing:'В РАБОТЕ',paid:'ОПЛАЧЕН',delivered:'ДОСТАВЛЕН'}[s]||(s||'НОВЫЙ');
+  return{new:'НОВЫЙ',processing:'В РАБОТЕ',paid:'ОПЛАЧЕН',delivered:'ДОСТАВЛЕН'}[s]||'НОВЫЙ';
 }
 function fmtDate(d){
   return new Date(d).toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});

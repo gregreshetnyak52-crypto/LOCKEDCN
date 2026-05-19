@@ -164,6 +164,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 <th>КЛИЕНТ</th>
 <th>ССЫЛКА / ТОВАР</th>
 <th>ДЕТАЛИ</th>
+<th>ФОТО</th>
 <th>СТАТУС</th>
 </tr>
 </thead>
@@ -246,6 +247,9 @@ async function loadOrders(){
         ${o.size?`Размер: ${esc(o.size)}<br>`:''}
         ${o.color?`Цвет: ${esc(o.color)}<br>`:''}
         ${o.qty?`Кол-во: ${o.qty}`:''}
+      </td>
+      <td>
+        ${o.file_url?`<a href="${esc(o.file_url)}" target="_blank" style="display:inline-block;border:1px solid rgba(245,245,245,0.12);padding:6px 12px;font-size:10px;font-weight:800;text-transform:uppercase;color:var(--signal);white-space:nowrap">ФОТО →</a>`:'—'}
       </td>
       <td>
         <select class="status-select" onchange="updateStatus('${o.id}',this.value)">
