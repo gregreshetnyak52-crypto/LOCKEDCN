@@ -292,6 +292,14 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 .hdr-register:hover{border-color:rgba(245,245,245,0.6);background:rgba(245,245,245,0.06)}
 .hdr-cabinet{display:inline-flex;align-items:center;padding:11px 20px;border:1px solid var(--line);font-size:11px;font-weight:700;text-transform:uppercase;color:var(--w);transition:all .3s;white-space:nowrap;text-decoration:none}
 .hdr-cabinet:hover{border-color:rgba(245,245,245,0.25);background:rgba(245,245,245,0.04)}
+/* PRICE CALC */
+.price-box{background:rgba(95,211,195,0.04);border:1px solid rgba(95,211,195,0.18);padding:20px 22px;margin-bottom:14px;display:none}
+.price-box.on{display:block}
+.pb-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:rgba(245,245,245,0.55);padding:5px 0;border-bottom:1px solid rgba(245,245,245,0.05)}
+.pb-row:last-of-type{border-bottom:none}
+.pb-total{display:flex;justify-content:space-between;align-items:center;font-size:17px;font-weight:900;color:var(--signal);border-top:1px solid rgba(95,211,195,0.2);padding-top:14px;margin-top:10px}
+.pb-note{font-size:11px;color:rgba(245,245,245,0.3);margin-top:10px;line-height:1.45}
+.fi-select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(245,245,245,0.4)' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;cursor:pointer}
 /* CONSENT */
 .consent-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:16px;cursor:pointer}
 .consent-row input[type=checkbox]{width:16px;height:16px;margin-top:2px;accent-color:var(--signal);flex-shrink:0;cursor:pointer}
@@ -549,6 +557,30 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 <label class="fl">Кол-во</label>
 <input type="number" class="fi" id="qty" placeholder="1" min="1">
 </div>
+</div>
+<div class="fg">
+<label class="fl">Цена товара (¥ юань)</label>
+<input type="number" class="fi" id="price" placeholder="580" min="0" step="0.01" oninput="calcPrice()">
+</div>
+<div class="fr">
+<div class="fg">
+<label class="fl">Вес товара (кг)</label>
+<input type="number" class="fi" id="weight" placeholder="0.8" min="0" step="0.1" oninput="calcPrice()">
+</div>
+<div class="fg">
+<label class="fl">Доставка</label>
+<select class="fi fi-select" id="delivery" onchange="calcPrice()">
+<option value="air">✈ Авиа — 7 дней ($30/кг)</option>
+<option value="truck">🚛 Автовоз — 2-3 нед. ($6/кг)</option>
+</select>
+</div>
+</div>
+<div class="price-box" id="priceBox">
+<div class="pb-row"><span>Товар</span><span id="pbItem">—</span></div>
+<div class="pb-row"><span>Комиссия 20%</span><span id="pbFee">—</span></div>
+<div class="pb-row"><span id="pbDeliveryLabel">Доставка (авиа)</span><span id="pbDelivery">—</span></div>
+<div class="pb-total"><span>ИТОГО ≈</span><span id="pbTotal">—</span></div>
+<div class="pb-note">Расчёт ориентировочный. Курс ЦБ РФ. Финальная цена — после подтверждения менеджером.</div>
 </div>
 <div class="fg">
 <label class="fl">Ваш Telegram *</label>
@@ -863,6 +895,36 @@ async function saveOrderToSupabase(order){
     telegram:order.tg,comment:order.comment||null,
     file_url:order.file_url||null,status:'new'
   });
+}
+
+// PRICE CALCULATOR
+let _cnyRate=null,_usdRate=null;
+(async function fetchRates(){
+  try{
+    const d=await(await fetch('https://www.cbr-xml-daily.ru/daily_json.js')).json();
+    _cnyRate=d.Valute.CNY.Value/d.Valute.CNY.Nominal;
+    _usdRate=d.Valute.USD.Value/d.Valute.USD.Nominal;
+  }catch(e){_cnyRate=12.5;_usdRate=92;}
+})();
+function calcPrice(){
+  const price=parseFloat(document.getElementById('price').value)||0;
+  const weight=parseFloat(document.getElementById('weight').value)||0;
+  const dType=document.getElementById('delivery').value;
+  const box=document.getElementById('priceBox');
+  if(!price){box.classList.remove('on');return;}
+  if(!_cnyRate){setTimeout(calcPrice,600);return;}
+  const itemRub=price*_cnyRate;
+  const feeRub=itemRub*0.20;
+  const dRate=dType==='air'?30:6;
+  const dRub=weight*dRate*_usdRate;
+  const total=itemRub+feeRub+(weight?dRub:0);
+  const fmt=n=>Math.round(n).toLocaleString('ru-RU')+' ₽';
+  document.getElementById('pbItem').textContent=fmt(itemRub);
+  document.getElementById('pbFee').textContent=fmt(feeRub);
+  document.getElementById('pbDeliveryLabel').textContent='Доставка ('+(dType==='air'?'авиа':'автовоз')+')';
+  document.getElementById('pbDelivery').textContent=weight?fmt(dRub):'введите вес';
+  document.getElementById('pbTotal').textContent=weight?fmt(total):fmt(itemRub+feeRub)+' + доставка';
+  box.classList.add('on');
 }
 
 async function sendOrder(e){
